@@ -74,8 +74,8 @@ Color32 Texture::GetPixel(float u, float v) const
 
 	if(_filtering == TextureFiltering::Nearest)
 	{
-		int x = (int)(ceil(u * _width - 0.5f));
-		int y = (int)(ceil(v * _height - 0.5f));
+		int x = (int)(ceil(u * _width - 1.0f));
+		int y = (int)(ceil(v * _height - 1.0f));
 
 		return _pixels[x * _height + y];
 	}
