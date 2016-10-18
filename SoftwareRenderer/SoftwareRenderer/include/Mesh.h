@@ -20,7 +20,7 @@ protected:
 
 public:
 	Mesh();
-	Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMode = TextureWrapMode::Clamp);
+	Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMode = TextureWrapMode::Clamp, TextureFiltering fitering = TextureFiltering::Nearest);
 	virtual ~Mesh();
 
 	virtual void Draw(DeviceContext* deviceContext, DirectionalLight* light) override;

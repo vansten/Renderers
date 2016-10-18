@@ -7,12 +7,29 @@ Texture::Texture()
 	_pixels = 0;
 }
 
-Texture::Texture(int width, int height, TextureWrapMode wrapMode)
+Texture::Texture(int width, int height)
 {
 	_width = width;
 	_height = height;
 	_pixels = new Color32[_width * _height];
+	_filtering = TextureFiltering::Nearest;
+	_wrapMode = TextureWrapMode::Wrap;
+}
+
+Texture::Texture(int width, int height, TextureWrapMode wrapMode) : Texture(width, height)
+{
 	_wrapMode = wrapMode;
+}
+
+Texture::Texture(int width, int height, TextureFiltering filtering) : Texture(width, height)
+{
+	_filtering = filtering;
+}
+
+Texture::Texture(int width, int height, TextureWrapMode wrapMode, TextureFiltering filtering) : Texture(width, height)
+{
+	_wrapMode = wrapMode;
+	_filtering = _filtering;
 }
 
 Texture::~Texture()
@@ -27,6 +44,11 @@ Texture::~Texture()
 void Texture::SetWrapMode(TextureWrapMode wrapMode)
 {
 	_wrapMode = wrapMode;
+}
+
+void Texture::SetFiltering(TextureFiltering filtering)
+{
+	_filtering = filtering;
 }
 
 void Texture::SetPixel(int x, int y, Color32 color)
@@ -44,15 +66,35 @@ Color32 Texture::GetPixel(float u, float v) const
 		u = fmax(0.0f, fmin(u, 1.0f));
 		v = fmax(0.0f, fmin(v, 1.0f));
 	}
-	else
+	else //Wrap texture
 	{
 		u = WrapModeNormalize(u);
 		v = WrapModeNormalize(v);
 	}
 
-	int x = u * _width;
-	int y = v * _height;
-	return _pixels[y * _width + x];
+	if(_filtering == TextureFiltering::Nearest)
+	{
+		int x = (int)(ceil(u * _width - 0.5f));
+		int y = (int)(ceil(v * _height - 0.5f));
+
+		return _pixels[x * _height + y];
+	}
+	else //Bilinear filtering
+	{
+		float uWidth = u * _width;
+		float vHeight = v * _height;
+		int x = int(uWidth);
+		int y = int(vHeight);
+		float tx = uWidth - x;
+		float ty = vHeight - y;
+		const Color32 c00 = _pixels[x * _height + y];
+		const Color32 c10 = _pixels[x * _height + (y + 1)];
+		const Color32 c01 = _pixels[(x + 1) * _height + y];
+		const Color32 c11 = _pixels[(x + 1) * _height + (y + 1)];
+		Color32 a = c00 * (1.f - tx) + c10 * tx;
+		Color32 b = c01 * (1.f - tx) + c11 * tx;
+		return a * (1.f - ty) + b * ty;
+	}
 }
 
 float Texture::WrapModeNormalize(float x) const

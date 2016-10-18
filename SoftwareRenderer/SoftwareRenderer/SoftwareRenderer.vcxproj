@@ -143,6 +143,9 @@
     <ClCompile Include="src\Shape.cpp" />
     <ClCompile Include="src\System.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\Rock.tga" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

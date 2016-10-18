@@ -11,7 +11,7 @@ Mesh::Mesh() : Shape()
 
 }
 
-Mesh::Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMode) : Shape()
+Mesh::Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMode, TextureFiltering filtering) : Shape()
 {
 	//Get extension
 	//If extension == obj then LoadObj();
@@ -32,6 +32,7 @@ Mesh::Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMo
 		{
 			TGASerializer::SaveTGA("textures/test.tga", _texture);
 			_texture->SetWrapMode(wrapMode);
+			_texture->SetFiltering(filtering);
 		}
 	}
 	else

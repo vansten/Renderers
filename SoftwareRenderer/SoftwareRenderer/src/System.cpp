@@ -106,7 +106,8 @@ void System::Run()
 	Timer* timer = new Timer();
 	float time = 0.0f;
 	float fps;
-	std::string fpsString;
+	float avgMS = 0.0f;
+	std::string statsString;
 	int frames = 0;
 	while(bRunning)
 	{
@@ -125,11 +126,13 @@ void System::Run()
 		if(time > 0.5f)
 		{
 			fps = frames / time;
-			fpsString = "FPS: " + toString(fps, 4);
+			avgMS = time / frames;
+			statsString = "FPS: " + toString(fps, 4);
+			statsString += " MS/frame: " + toString(avgMS, 4);
 			frames = 0;
 			time = 0.0f;
 		}
-		TextOut(_deviceContext->_deviceContextHandle, 0, 0, fpsString.c_str(), fpsString.size());
+		TextOut(_deviceContext->_deviceContextHandle, 0, 0, statsString.c_str(), statsString.size());
 	}
 	delete timer;
 	timer = 0;

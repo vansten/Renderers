@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#define VERTEX_LIGHTING 1
+#define VERTEX_LIGHTING 0
 #if VERTEX_LIGHTING
 #define PIXEL_LIGHTING 0
 #else
@@ -92,12 +92,13 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 	float lambda3 = 0.0f;
 	Vector2 finalUV;
 	float finalZ;
-	Color32 finalColor;
 
+	Vector3 directionInverted = -(directionalLight->Direction);
+	Color32 finalColor;
+#if VERTEX_LIGHTING
 	Color32 vertex1Light = Color32::White;
 	Color32 vertex2Light = Color32::White;
 	Color32 vertex3Light = Color32::White;
-#if VERTEX_LIGHTING
 	if(directionalLight != nullptr)
 	{
 		Vector4 v1Normal = objectToWorld.MultiplyByVector4(Vector4(v1.Normal, 0));
@@ -106,7 +107,6 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 		Vector3 v1NormalWorld(v1Normal[0], v1Normal[1], v1Normal[2]);
 		Vector3 v2NormalWorld(v2Normal[0], v2Normal[1], v2Normal[2]);
 		Vector3 v3NormalWorld(v3Normal[0], v3Normal[1], v3Normal[2]);
-		Vector3 directionInverted = -(directionalLight->Direction);
 		float dot = clamp(Vector3::Dot(directionInverted, v1NormalWorld));
 		vertex1Light = directionalLight->Color * dot;
 		dot = clamp(Vector3::Dot(directionInverted, v2NormalWorld));
@@ -138,14 +138,17 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 				if(depthBuffer->GetDepth(x, y) > finalZ)
 				{
 					finalUV = v1.UV * lambda1 + v2.UV * lambda2 + v3.UV * lambda3;
-					finalColor = vertex1Light * lambda1 + vertex2Light * lambda2 + vertex3Light * lambda3;
 					depthBuffer->SetDepth(x, y, finalZ);
 					Color32 c = texture->GetPixel(finalUV[0], finalUV[1]);
 #if VERTEX_LIGHTING
-					Color32 pixelColor = c * finalColor;
-					buffer->SetPixel(x, y, pixelColor);
+					finalColor = vertex1Light * lambda1 + vertex2Light * lambda2 + vertex3Light * lambda3;
+					buffer->SetPixel(x, y, c * finalColor);
 #elif PIXEL_LIGHTING
-					buffer->SetPixel(x, y, c);
+					Vector4 pixelNormal = objectToWorld.MultiplyByVector3(v1.Normal) * lambda1 + objectToWorld.MultiplyByVector3(v2.Normal) * lambda2 + objectToWorld.MultiplyByVector3(v3.Normal) * lambda3;
+					pixelNormal.Normalize();
+					float dot = clamp(Vector3::Dot(Vector3(pixelNormal[0], pixelNormal[1], pixelNormal[2]), directionInverted));
+					finalColor = directionalLight->Color * dot;
+					buffer->SetPixel(x, y, c * finalColor);
 #endif
 				}
 			}
