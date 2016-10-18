@@ -35,9 +35,9 @@ Matrix Matrix::Multiply(const Matrix& other) const
 	return m;
 }
 
-Vector4 Matrix::MultiplyByVector3(const Vector3& v) const
+Vector4 Matrix::MultiplyByVector3(const Vector3& v, const float w) const
 {
-	return MultiplyByVector4(Vector4(v, 1.0f));
+	return MultiplyByVector4(Vector4(v, w));
 }
 
 Vector4 Matrix::MultiplyByVector4(const Vector4& v) const

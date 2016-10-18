@@ -87,10 +87,14 @@ Color32 Texture::GetPixel(float u, float v) const
 		int y = int(vHeight);
 		float tx = uWidth - x;
 		float ty = vHeight - y;
+		int x1 = x + 1;
+		int y1 = y + 1;
+		if(x1 > _width) x1 = x;
+		if(y1 > _height) y1 = y;
 		const Color32 c00 = _pixels[x * _height + y];
-		const Color32 c10 = _pixels[x * _height + (y + 1)];
-		const Color32 c01 = _pixels[(x + 1) * _height + y];
-		const Color32 c11 = _pixels[(x + 1) * _height + (y + 1)];
+		const Color32 c10 = _pixels[x * _height + y1];
+		const Color32 c01 = _pixels[x1 * _height + y];
+		const Color32 c11 = _pixels[x1 * _height + y1];
 		Color32 a = c00 * (1.f - tx) + c10 * tx;
 		Color32 b = c01 * (1.f - tx) + c11 * tx;
 		return a * (1.f - ty) + b * ty;

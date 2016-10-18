@@ -30,7 +30,6 @@ Mesh::Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMo
 		TGASerializer::LoadTGA(textureName.c_str(), &_texture);
 		if(_texture != 0)
 		{
-			TGASerializer::SaveTGA("textures/test.tga", _texture);
 			_texture->SetWrapMode(wrapMode);
 			_texture->SetFiltering(filtering);
 		}
@@ -59,6 +58,15 @@ void Mesh::Draw(DeviceContext* deviceContext, DirectionalLight* light)
 {
 	deviceContext->SetTexture(_texture);
 	deviceContext->DrawIndexed(_modelMatrix, _vertices, _indices, light);
+}
+
+void Mesh::AddToUVs(float u, float v)
+{
+	int verticesSize = _vertices.size();
+	for(int i = 0; i < verticesSize; ++i)
+	{
+		_vertices[i].UV += Vector2(u, v);
+	}
 }
 
 void Mesh::LoadFromOBJ(std::string fileName)

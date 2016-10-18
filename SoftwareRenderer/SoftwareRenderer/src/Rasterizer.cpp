@@ -85,6 +85,10 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 	bool tl2 = (dy23 < 0.0f || (dy23 == 0 && dx23 > 0));
 	bool tl3 = (dy31 < 0.0f || (dy31 == 0 && dx31 > 0));
 
+	Vector4 v1World = objectToWorld.MultiplyByVector3(v1.Position);
+	Vector4 v2World = objectToWorld.MultiplyByVector3(v2.Position);
+	Vector4 v3World = objectToWorld.MultiplyByVector3(v3.Position);
+
 	float dxx3 = 0.0f;
 	float dyy3 = 0.0f;
 	float lambda1 = 0.0f;
@@ -101,9 +105,9 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 	Color32 vertex3Light = Color32::White;
 	if(directionalLight != nullptr)
 	{
-		Vector4 v1Normal = objectToWorld.MultiplyByVector4(Vector4(v1.Normal, 0));
-		Vector4 v2Normal = objectToWorld.MultiplyByVector4(Vector4(v2.Normal, 0));
-		Vector4 v3Normal = objectToWorld.MultiplyByVector4(Vector4(v3.Normal, 0));
+		Vector4 v1Normal = objectToWorld.MultiplyByVector3(v1.Normal, 0);
+		Vector4 v2Normal = objectToWorld.MultiplyByVector3(v2.Normal, 0);
+		Vector4 v3Normal = objectToWorld.MultiplyByVector3(v3.Normal, 0);
 		Vector3 v1NormalWorld(v1Normal[0], v1Normal[1], v1Normal[2]);
 		Vector3 v2NormalWorld(v2Normal[0], v2Normal[1], v2Normal[2]);
 		Vector3 v3NormalWorld(v3Normal[0], v3Normal[1], v3Normal[2]);
@@ -114,6 +118,8 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 		dot = clamp(Vector3::Dot(directionInverted, v3NormalWorld));
 		vertex3Light = directionalLight->Color * dot;
 	}
+#else
+	Vector4 pixelNormal;
 #endif
 
 	for(int x = minX; x < maxX; ++x)
@@ -134,7 +140,7 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 				lambda1 = (dy23 * dxx3 + -dx23 * dyy3) * lambda1den;
 				lambda2 = (dy31 * dxx3 + -dx31 * dyy3) * lambda2den;
 				lambda3 = 1.0f - lambda1 - lambda2;
-				finalZ = lambda1 * v1.Position[2] + lambda2 * v2.Position[2] + lambda3 * v3.Position[2];
+				finalZ = lambda1 * v1World[2] + lambda2 * v2World[2] + lambda3 * v3World[2];
 				if(depthBuffer->GetDepth(x, y) > finalZ)
 				{
 					finalUV = v1.UV * lambda1 + v2.UV * lambda2 + v3.UV * lambda3;
@@ -144,7 +150,7 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 					finalColor = vertex1Light * lambda1 + vertex2Light * lambda2 + vertex3Light * lambda3;
 					buffer->SetPixel(x, y, c * finalColor);
 #elif PIXEL_LIGHTING
-					Vector4 pixelNormal = objectToWorld.MultiplyByVector3(v1.Normal) * lambda1 + objectToWorld.MultiplyByVector3(v2.Normal) * lambda2 + objectToWorld.MultiplyByVector3(v3.Normal) * lambda3;
+					pixelNormal = objectToWorld.MultiplyByVector3(v1.Normal, 0.0f) * lambda1 + objectToWorld.MultiplyByVector3(v2.Normal, 0.0f) * lambda2 + objectToWorld.MultiplyByVector3(v3.Normal, 0.0f) * lambda3;
 					pixelNormal.Normalize();
 					float dot = clamp(Vector3::Dot(Vector3(pixelNormal[0], pixelNormal[1], pixelNormal[2]), directionInverted));
 					finalColor = directionalLight->Color * dot;

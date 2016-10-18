@@ -25,6 +25,8 @@ public:
 
 	virtual void Draw(DeviceContext* deviceContext, DirectionalLight* light) override;
 
+	void AddToUVs(float u, float v);
+
 protected:
 	void LoadFromOBJ(std::string fileName);
 	Face ParseFace(std::string face);

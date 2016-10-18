@@ -17,12 +17,12 @@ DepthBuffer::~DepthBuffer()
 
 void DepthBuffer::Clear()
 {
-	float* start = _depth;
-	float* end = &(_depth[_width * _height - 1]);
-	while(start < end)
+	for(int i = 0; i < _width; ++i)
 	{
-		*start = FLT_MAX;
-		++start;
+		for(int j = 0; j < _height; ++j)
+		{
+			SetDepth(i, j, FLT_MAX);
+		}
 	}
 }
 

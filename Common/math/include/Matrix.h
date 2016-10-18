@@ -17,7 +17,7 @@ public:
 	~Matrix();
 
 	Matrix Multiply(const Matrix& other) const;
-	Vector4 MultiplyByVector3(const Vector3& v) const;
+	Vector4 MultiplyByVector3(const Vector3& v, const float w = 1.0f) const;
 	Vector4 MultiplyByVector4(const Vector4& v) const;
 	std::string ToString() const;
 
