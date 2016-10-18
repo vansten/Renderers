@@ -67,9 +67,9 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 	v3Screen = v3Screen * halfDimMult + halfDimAdd;
 
 	int minX = (int)clamp(Min(v1Screen[0], v2Screen[0], v3Screen[0]), 0, halfDimMult[0] * 2.0f);
-	int maxX = (int)clamp(Max(v1Screen[0], v2Screen[0], v3Screen[0]), 0, halfDimMult[0] * 2.0f);
+	int maxX = (int)(ceil(clamp(Max(v1Screen[0], v2Screen[0], v3Screen[0]), 0, halfDimMult[0] * 2.0f)));
 	int minY = (int)clamp(Min(v1Screen[1], v2Screen[1], v3Screen[1]), 0, halfDimMult[1] * 2.0f);
-	int maxY = (int)clamp(Max(v1Screen[1], v2Screen[1], v3Screen[1]), 0, halfDimMult[1] * 2.0f);
+	int maxY = (int)(ceil(clamp(Max(v1Screen[1], v2Screen[1], v3Screen[1]), 0, halfDimMult[1] * 2.0f)));
 
 	float dx12 = v1Screen[0] - v2Screen[0];
 	float dx23 = v2Screen[0] - v3Screen[0];
