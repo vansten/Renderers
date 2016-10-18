@@ -4,8 +4,6 @@
 
 #include "TGASerializer.h"
 
-//#include "Profiler.h"
-
 #include "Matrix.h"
 
 #include "Timer.h"
@@ -20,7 +18,7 @@
 #endif
 
 template <typename T>
-std::string to_string_with_precision(const T a_value, const int n = 6)
+std::string toString(const T a_value, const int n = 6)
 {
 	std::ostringstream out;
 	out << std::setprecision(n) << a_value;
@@ -127,7 +125,7 @@ void System::Run()
 		if(time > 0.5f)
 		{
 			fps = frames / time;
-			fpsString = "FPS: " + to_string_with_precision(fps, 4);
+			fpsString = "FPS: " + toString(fps, 4);
 			frames = 0;
 			time = 0.0f;
 		}
