@@ -13,6 +13,11 @@ void getRGBA(uint32 color, uint8& r, uint8& g, uint8& b, uint8& a)
 	a = (color & 0xff000000) >> 24;
 }
 
+float clamp(const float & value, const float min, const float max)
+{
+	return fmax(fmin(value, max), min);
+}
+
 Color32 Color32::Black = Color32(0x00, 0x00, 0x00, 0x00);
 Color32 Color32::Red = Color32(0xFF, 0x00, 0x00, 0xFF);
 Color32 Color32::Green = Color32(0x00, 0xFF, 0x00, 0xFF);

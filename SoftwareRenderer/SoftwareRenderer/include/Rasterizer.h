@@ -6,6 +6,7 @@
 #include "Vertex.h"
 #include "Texture.h"
 #include "DirectionalLight.h"
+#include "SpotLight.h"
 
 class Buffer;
 class DepthBuffer;
@@ -17,5 +18,5 @@ public:
 	Rasterizer();
 	~Rasterizer();
 
-	void DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffer, const Matrix& objectToWorld, const Matrix& mvp, const VertexPositionUVNormal& v1, const VertexPositionUVNormal& v2, const VertexPositionUVNormal& v3, const Texture* texture, const DirectionalLight* directionalLight) const;
+	void DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffer, const Matrix& objectToWorld, const Matrix& mvp, const VertexPositionUVNormal& v1, const VertexPositionUVNormal& v2, const VertexPositionUVNormal& v3, const Texture* texture, const DirectionalLight* directionalLight, const SpotLight* spotlight) const;
 };

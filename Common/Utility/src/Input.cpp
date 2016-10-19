@@ -28,10 +28,10 @@ void Input::Update()
 	{
 		XINPUT_STATE s;
 		_getState(0, &s);
-		_leftStick.Set(0, s.Gamepad.sThumbLX / (float)0xccc);
-		_leftStick.Set(1, s.Gamepad.sThumbLY / (float)0xccc);
-		_rightStick.Set(0, s.Gamepad.sThumbRX / (float)0xccc);
-		_rightStick.Set(1, s.Gamepad.sThumbRY / (float)0xccc);
+		_leftStick[0] = s.Gamepad.sThumbLX / (float)0xccc;
+		_leftStick[1] = s.Gamepad.sThumbLY / (float)0xccc;
+		_rightStick[0] = s.Gamepad.sThumbRX / (float)0xccc;
+		_rightStick[1] = s.Gamepad.sThumbRY / (float)0xccc;
 	}
 }
 

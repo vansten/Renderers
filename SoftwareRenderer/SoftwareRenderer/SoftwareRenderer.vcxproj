@@ -131,6 +131,7 @@
     <ClInclude Include="include\Rasterizer.h" />
     <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Shape.h" />
+    <ClInclude Include="include\SpotLight.h" />
     <ClInclude Include="include\System.h" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
     <ClCompile Include="src\Rasterizer.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Shape.cpp" />
+    <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\System.cpp" />
   </ItemGroup>
   <ItemGroup>

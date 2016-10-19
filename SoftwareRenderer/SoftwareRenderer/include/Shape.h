@@ -7,6 +7,7 @@
 #include "Matrix.h"
 
 #include "DirectionalLight.h"
+#include "SpotLight.h"
 
 class DeviceContext;
 
@@ -29,5 +30,5 @@ public:
 	void Scale(const float& x, const float& y, const float& z);
 	void CalculateModelMatrix();
 	
-	virtual void Draw(DeviceContext* deviceContext, DirectionalLight* light);
+	virtual void Draw(DeviceContext* deviceContext, const DirectionalLight* light, const SpotLight* spotLight);
 };

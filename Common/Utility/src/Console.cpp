@@ -10,7 +10,7 @@ bool Console::_opened = false;
 
 bool Console::Open()
 {
-	_opened = AllocConsole();
+	_opened = (AllocConsole() != 0);
 	freopen_s(&_in, "CONIN$", "r", stdin);
 	freopen_s(&_out, "CONOUT$", "w", stdout);
 	freopen_s(&_err, "CONOUT$", "w", stderr);

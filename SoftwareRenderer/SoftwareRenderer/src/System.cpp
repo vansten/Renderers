@@ -100,9 +100,6 @@ void System::Run()
 {
 	bRunning = true;
 	float dt = 1.0f / 60.0f;
-	LARGE_INTEGER start;
-	LARGE_INTEGER current;
-	LARGE_INTEGER elapsed;
 	Timer* timer = new Timer();
 	float time = 0.0f;
 	float fps;
@@ -120,7 +117,7 @@ void System::Run()
 		_scene->Draw(_deviceContext);
 
 		_deviceContext->SwapBuffers();
-		dt = timer->GetElapsedTime();
+		dt = (float)timer->GetElapsedTime();
 		time += dt;
 		++frames;
 		if(time > 0.5f)
@@ -132,7 +129,7 @@ void System::Run()
 			frames = 0;
 			time = 0.0f;
 		}
-		TextOut(_deviceContext->_deviceContextHandle, 0, 0, statsString.c_str(), statsString.size());
+		TextOut(_deviceContext->_deviceContextHandle, 0, 0, statsString.c_str(), (int)(statsString.size()));
 	}
 	delete timer;
 	timer = 0;

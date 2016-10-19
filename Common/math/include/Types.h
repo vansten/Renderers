@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <cmath>
 
 typedef int8_t int8;
 typedef int16_t int16;
@@ -12,6 +13,7 @@ typedef uint32_t uint32;
 
 uint32 make(uint8 r, uint8 g, uint8 b, uint8 a);
 void getRGBA(uint32 color, uint8& r, uint8& g, uint8& b, uint8& a);
+float clamp(const float& value, const float min = 0, const float max = 1);
 
 struct Color32
 {
@@ -69,10 +71,10 @@ public:
 	Color32 operator*(float s) const
 	{
 		Color32 c = *this;
-		c.R = (uint8)(c.R * s);
-		c.G = (uint8)(c.G * s);
-		c.B = (uint8)(c.B * s);
-		c.A = (uint8)(c.A * s);
+		c.R = (uint8)clamp(((uint32)c.R) * s, 0, 255);
+		c.G = (uint8)clamp(((uint32)c.G) * s, 0, 255);
+		c.B = (uint8)clamp(((uint32)c.B) * s, 0, 255);
+		c.A = (uint8)clamp(((uint32)c.A) * s, 0, 255);
 		return c;
 	}
 

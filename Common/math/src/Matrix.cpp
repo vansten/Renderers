@@ -29,7 +29,7 @@ Matrix Matrix::Multiply(const Matrix& other) const
 	{
 		for(int j = 0; j < 4; ++j)
 		{
-			m._columns[i].Set(j, Vector4::Dot(_columns[i], otherT._columns[j]));
+			m._columns[i][j] = Vector4::Dot(_columns[i], otherT._columns[j]);
 		}
 	}
 	return m;
@@ -118,17 +118,17 @@ Matrix Matrix::Transpose(const Matrix& m)
 Matrix Matrix::FromScale(const float& scale)
 {
 	Matrix m = Matrix::Identity * scale;
-	m._columns[3].Set(3, 1.0f);
+	m._columns[3][3] = 1.0f;
 	return m;
 }
 
 Matrix Matrix::FromScale(const Vector3& scaleVector)
 {
 	Matrix m;
-	m._columns[0].Set(0, scaleVector[0]);
-	m._columns[1].Set(1, scaleVector[1]);
-	m._columns[2].Set(2, scaleVector[2]);
-	m._columns[3].Set(3, 1.0f);
+	m._columns[0][0] = scaleVector[0];
+	m._columns[1][1] = scaleVector[1];
+	m._columns[2][2] = scaleVector[2];
+	m._columns[3][3] = 1.0f;
 	return m;
 }
 

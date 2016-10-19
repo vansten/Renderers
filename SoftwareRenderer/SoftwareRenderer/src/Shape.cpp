@@ -40,7 +40,7 @@ void Shape::CalculateModelMatrix()
 	_modelMatrix = T.Multiply(R).Multiply(S);
 }
 
-void Shape::Draw(DeviceContext* deviceContext, DirectionalLight* light)
+void Shape::Draw(DeviceContext* deviceContext, const DirectionalLight* light, const SpotLight* spotlight)
 {
-	deviceContext->DrawIndexed(_modelMatrix, _vertices, _indices, light);
+	deviceContext->DrawIndexed(_modelMatrix, _vertices, _indices, light, spotlight);
 }

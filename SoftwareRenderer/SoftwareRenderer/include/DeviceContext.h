@@ -42,7 +42,7 @@ public:
 	bool Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow);
 	void Shutdown();
 	void SetTexture(Texture* t);
-	void DrawIndexed(const Matrix& modelMatrix, const std::vector<VertexPositionUVNormal>& vertices, const std::vector<Int3>& indices, DirectionalLight* light);
+	void DrawIndexed(const Matrix& modelMatrix, const std::vector<VertexPositionUVNormal>& vertices, const std::vector<Int3>& indices, const DirectionalLight* light, const SpotLight* spotlight) const;
 	void SwapBuffers();
 
 	void ResizeBuffer(int width, int height);

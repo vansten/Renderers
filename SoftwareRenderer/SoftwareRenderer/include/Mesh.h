@@ -6,15 +6,6 @@
 
 class Mesh : public Shape
 {
-private:
-	class Face
-	{
-	public:
-		Int3 vertices;
-		Int3 normals;
-		Int3 uvs;
-	};
-
 protected:
 	Texture* _texture;
 
@@ -23,13 +14,10 @@ public:
 	Mesh(std::string fileName, std::string textureName, TextureWrapMode wrapMode = TextureWrapMode::Clamp, TextureFiltering fitering = TextureFiltering::Nearest);
 	virtual ~Mesh();
 
-	virtual void Draw(DeviceContext* deviceContext, DirectionalLight* light) override;
+	virtual void Draw(DeviceContext* deviceContext, const DirectionalLight* light, const SpotLight* spotlight) override;
 
 	void AddToUVs(float u, float v);
 
 protected:
 	void LoadFromOBJ(std::string fileName);
-	Face ParseFace(std::string face);
-	Vector3 ParseVector3(std::string line);
-	Vector2 ParseVector2(std::string line);
 };

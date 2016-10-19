@@ -38,7 +38,7 @@ void Scene::Init()
 	if(r1.Intersects(*s, hit))
 	{
 		const std::vector<Vector3>& intersectionPoints = hit.GetIntersectionPoints();
-		int intersectionsCount = intersectionPoints.size();
+		int intersectionsCount = (int)intersectionPoints.size();
 		Console::WriteFormat("There was an intersection between\nr1 (%s)\nand sphere (%s).\nThe intersection has %i point%s:\n", r1.ToString().c_str(), s->ToString().c_str(), intersectionsCount, (intersectionsCount > 1 ? "s" : ""));
 		for(int i = 0; i < intersectionsCount; ++i)
 		{
@@ -49,7 +49,7 @@ void Scene::Init()
 	if(r2.Intersects(*s, hit))
 	{
 		const std::vector<Vector3>& intersectionPoints = hit.GetIntersectionPoints();
-		int intersectionsCount = intersectionPoints.size();
+		int intersectionsCount = (int)intersectionPoints.size();
 		Console::WriteFormat("There was an intersection between\nr2 (%s)\nand sphere (%s).\nThe intersection has %i point%s:\n", r2.ToString().c_str(), s->ToString().c_str(), intersectionsCount, (intersectionsCount > 1 ? "s" : ""));
 		for(int i = 0; i < intersectionsCount; ++i)
 		{
@@ -60,7 +60,7 @@ void Scene::Init()
 	if(r3.Intersects(*s, hit))
 	{
 		const std::vector<Vector3>& intersectionPoints = hit.GetIntersectionPoints();
-		int intersectionsCount = intersectionPoints.size();
+		int intersectionsCount = (int)intersectionPoints.size();
 		Console::WriteFormat("There was an intersection between\nr3 (%s)\nand sphere (%s).\nThe intersection has %i point%s:\n", r3.ToString().c_str(), s->ToString().c_str(), intersectionsCount, (intersectionsCount > 1 ? "s" : ""));
 		for(int i = 0; i < intersectionsCount; ++i)
 		{
@@ -72,7 +72,7 @@ void Scene::Init()
 	if(r2.Intersects(*p, hit))
 	{
 		const std::vector<Vector3>& intersectionPoints = hit.GetIntersectionPoints();
-		int intersectionsCount = intersectionPoints.size();
+		int intersectionsCount = (int)intersectionPoints.size();
 		Console::WriteFormat("There was an intersection between\nr2 (%s)\nand plane (%s).\nThe intersection has %i point%s:\n", r2.ToString().c_str(), p->ToString().c_str(), intersectionsCount, (intersectionsCount > 1 ? "s" : ""));
 		for(int i = 0; i < intersectionsCount; ++i)
 		{

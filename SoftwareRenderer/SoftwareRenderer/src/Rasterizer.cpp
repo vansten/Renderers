@@ -5,11 +5,14 @@
 
 #include <cmath>
 
+#define LIGHTING_ON 0
+#if LIGHTING_ON
 #define VERTEX_LIGHTING 0
 #if VERTEX_LIGHTING
 #define PIXEL_LIGHTING 0
 #else
 #define PIXEL_LIGHTING 1
+#endif
 #endif
 
 float Min(const float a, const float b, const float c)
@@ -43,7 +46,7 @@ Rasterizer::Rasterizer()
 Rasterizer::~Rasterizer()
 {}
 
-void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffer, const Matrix& objectToWorld, const Matrix& mvp, const VertexPositionUVNormal& v1, const VertexPositionUVNormal& v2, const VertexPositionUVNormal& v3, const Texture* texture, const DirectionalLight* directionalLight) const
+void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffer, const Matrix& objectToWorld, const Matrix& mvp, const VertexPositionUVNormal& v1, const VertexPositionUVNormal& v2, const VertexPositionUVNormal& v3, const Texture* texture, const DirectionalLight* directionalLight, const SpotLight* spotlight) const
 {
 	const Vector4& halfDimMult = Vector4(buffer->GetWidth() * 0.5f, buffer->GetHeight() * 0.5f, 1.0f, 1.0f);
 	const Vector4& halfDimAdd = Vector4(buffer->GetWidth() * 0.5f, buffer->GetHeight() * 0.5f, 0.0f, 0.0f);
@@ -98,7 +101,12 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 	float finalZ;
 
 	Vector3 directionInverted = -(directionalLight->Direction);
-	Color32 finalColor;
+	Color32 finalDirectionalColor;
+	Color32 finalSpotColor;
+	Vector4 lightDirection;
+	Vector4 pixelWorld;
+	Vector4 spotLightPosition = Vector4(spotlight->Position, 1.0f);
+	Vector4 spotLightDirection = Vector4(spotlight->Direction, 0.0f);
 #if VERTEX_LIGHTING
 	Color32 vertex1Light = Color32::White;
 	Color32 vertex2Light = Color32::White;
@@ -137,24 +145,52 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 				(c > 0.0f || (tl3 && c >= 0.0f))
 				)
 			{
+				//Compute interpolation
 				lambda1 = (dy23 * dxx3 + -dx23 * dyy3) * lambda1den;
 				lambda2 = (dy31 * dxx3 + -dx31 * dyy3) * lambda2den;
 				lambda3 = 1.0f - lambda1 - lambda2;
+				//Compute final z value for z test
 				finalZ = lambda1 * v1World[2] + lambda2 * v2World[2] + lambda3 * v3World[2];
 				if(depthBuffer->GetDepth(x, y) > finalZ)
 				{
+					//Compute final tex coords
 					finalUV = v1.UV * lambda1 + v2.UV * lambda2 + v3.UV * lambda3;
+					//Set depth
 					depthBuffer->SetDepth(x, y, finalZ);
 					Color32 c = texture->GetPixel(finalUV[0], finalUV[1]);
 #if VERTEX_LIGHTING
-					finalColor = vertex1Light * lambda1 + vertex2Light * lambda2 + vertex3Light * lambda3;
-					buffer->SetPixel(x, y, c * finalColor);
+					//Compute light color (directional only for now)
+					finalDirectionalColor = vertex1Light * lambda1 + vertex2Light * lambda2 + vertex3Light * lambda3;
+					buffer->SetPixel(x, y, c * finalDirectionalColor);
 #elif PIXEL_LIGHTING
+					//Compute per pixel lighting (pixel normal as well)
 					pixelNormal = objectToWorld.MultiplyByVector3(v1.Normal, 0.0f) * lambda1 + objectToWorld.MultiplyByVector3(v2.Normal, 0.0f) * lambda2 + objectToWorld.MultiplyByVector3(v3.Normal, 0.0f) * lambda3;
 					pixelNormal.Normalize();
+					pixelWorld = objectToWorld.MultiplyByVector3(v1.Position) * lambda1 + objectToWorld.MultiplyByVector3(v2.Position) * lambda2 + objectToWorld.MultiplyByVector3(v3.Position) * lambda3;
+					//Directiona ligthing
 					float dot = clamp(Vector3::Dot(Vector3(pixelNormal[0], pixelNormal[1], pixelNormal[2]), directionInverted));
-					finalColor = directionalLight->Color * dot;
-					buffer->SetPixel(x, y, c * finalColor);
+					finalDirectionalColor = directionalLight->Color * dot;
+					//Spotlight lighting
+					finalSpotColor = Color32(0, 0, 0, 0);
+					lightDirection = spotLightPosition - pixelWorld;
+					lightDirection[3] = 0.0f;
+					float dist(lightDirection.Length());
+					lightDirection.Normalize();
+					float NdotL(fmax(Vector4::Dot(pixelNormal, lightDirection), 0.0f));
+					if(NdotL > 0.0f)
+					{
+						float spotEffect = Vector4::Dot(spotLightDirection, -lightDirection);
+						if(spotEffect >= spotlight->SpotCutoffCosinus)
+						{
+							spotEffect = pow(spotEffect, spotlight->SpotExponent);
+							float att = spotEffect / (spotlight->Attenuation[0] * dist + spotlight->Attenuation[1] * dist * dist + 0.000001f);
+							finalSpotColor = spotlight->Color * NdotL * att;
+						}
+					}
+					//Set pixel
+					buffer->SetPixel(x, y, c * (finalDirectionalColor + finalSpotColor));
+#else
+					buffer->SetPixel(x, y, c);
 #endif
 				}
 			}

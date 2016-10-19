@@ -25,7 +25,7 @@ public:
 
 #pragma endregion
 
-protected:
+public:
 #pragma region Variables
 	union
 	{
@@ -70,14 +70,6 @@ public:
 #pragma endregion
 
 #pragma region Vector operations (Normalize, Length, LengthSquared, ToString)
-
-	void Set(uint32 index, float value)
-	{
-		if(index >= 0 && index < N)
-		{
-			_components[index] = value;
-		}
-	}
 
 	Vector<N> Normalized() const
 	{
@@ -157,20 +149,14 @@ public:
 
 #pragma region Operators
 
-	float operator[](uint32 index) const
+	float& operator[](uint32 index) //Reference for writing too
 	{
-		if(index >= 0 && index < N)
-		{
-#if USE_SIMD
-			return _simdValue.m128_f32[index];
-#else
-			return _components[index];
-#endif
-		}
-		else
-		{
-			return 0.0f;
-		}
+		return _components[index];
+	}
+
+	float operator[](uint32 index) const //Non-reference read-only
+	{
+		return _components[index];
 	}
 
 	void operator=(const Vector<N>& other)
@@ -437,4 +423,3 @@ typedef Vector<3> Vector3;
 typedef Vector<4> Vector4;
 
 Vector3 Reflect(const Vector3& v, const Vector3& normal);
-float clamp(const float& v, const float min = 0.0f, const float max = 1.0f);

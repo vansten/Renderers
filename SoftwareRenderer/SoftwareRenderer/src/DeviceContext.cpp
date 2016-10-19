@@ -17,8 +17,8 @@ DeviceContext::~DeviceContext()
 
 bool DeviceContext::Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow)
 {
-	int windowWidth = 640;
-	int windowHeight = 480;
+	int windowWidth = 420;
+	int windowHeight = 420;
 
 	WNDCLASS windowClass = {};
 	windowClass.hInstance = hInstance;
@@ -27,7 +27,7 @@ bool DeviceContext::Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow)
 	windowClass.style = CS_VREDRAW | CS_HREDRAW;
 
 	RegisterClass(&windowClass);
-	_windowHandle = CreateWindow(windowClass.lpszClassName, "DT GL", WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU, 960 - windowWidth * 0.5f, 540 - windowHeight * 0.5f, windowWidth, windowHeight, 0, 0, hInstance, 0);
+	_windowHandle = CreateWindow(windowClass.lpszClassName, "DT GL", WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU, (int)(960.0f - windowWidth * 0.5f), (int)(540.0f - windowHeight * 0.5f), windowWidth, windowHeight, 0, 0, hInstance, 0);
 	if(!_windowHandle)
 	{
 		return false;
@@ -126,7 +126,7 @@ void DeviceContext::SetTexture(Texture* t)
 	_currentTexture = t;
 }
 
-void DeviceContext::DrawIndexed(const Matrix& modelMatrix, const std::vector<VertexPositionUVNormal>& vertices, const std::vector<Int3>& indices, DirectionalLight* light)
+void DeviceContext::DrawIndexed(const Matrix& modelMatrix, const std::vector<VertexPositionUVNormal>& vertices, const std::vector<Int3>& indices, const DirectionalLight* light, const SpotLight* spotlight) const
 {
 	uint32 indicesSize = (uint32)indices.size();
 	Matrix mvp = _viewProjectionMatrix.Multiply(modelMatrix);
@@ -139,7 +139,7 @@ void DeviceContext::DrawIndexed(const Matrix& modelMatrix, const std::vector<Ver
 		_rasterizer->DrawTriangleWithTexture(_backBuffer, _depthBuffer, modelMatrix, mvp, 
 								  v1, v2, v3,
 								  _currentTexture,
-								  light);
+								  light, spotlight);
 	}
 }
 
