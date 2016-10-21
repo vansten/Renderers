@@ -1,6 +1,8 @@
 #include "..\include\Block.h"
 #include "../include/Engine.h"
 
+#include "../include/Defines.h"
+
 Block::Block(int left, int bottom, int width, int height, Color24 backgroundColor) : _x0(left), _y0(bottom), _width(width), _height(height), _backgroundColor(backgroundColor), _renderedImage(0)
 {
 	_renderedImage = new Image(width, height, backgroundColor);
@@ -26,13 +28,16 @@ void Block::Render(Scene* _scene)
 	float onePerAR = halfHeight / halfWidth;
 	int maxI = _x0 + _width;
 	int maxY = _y0 + _height;
+	float pixelWidth = 1.0f / halfWidth;
+	float pixelHeight = 1.0f / halfHeight;
 	for(int i = _x0; i < maxI; ++i)
 	{
 		for(int j = _y0; j < maxY; ++j)
 		{
 #if ORTHO
-			//Ray r(i / 1280.0f, j / 720.0f, -10.0f, 0.0f, 0.0f, 1.0f);
-			Ray r(i / halfWidth - 1.0f, j / halfHeight - 1.0f, -10.0f, 0.0f, 0.0f, 1.0f);
+			float x = -1.0f + (i + 0.5f) * pixelWidth;
+			float y = 1.0f - (j  + 0.5f) * pixelHeight;
+			Ray r(x, y, -10.0f, 0.0f, 0.0f, 1.0f);
 			r.Origin[1] *= onePerAR;
 #else
 			Ray r(i, j, -10, 0, 0, 1);

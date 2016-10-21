@@ -5,6 +5,9 @@
 #include "../include/TGASerializer.h"
 #include "../include/Timer.h"
 #include "../include/Block.h"
+#include "../include/Defines.h"
+
+#include <thread>
 
 Engine* Engine::_instance = 0;
 
@@ -20,7 +23,9 @@ Engine::~Engine()
 
 bool Engine::Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow)
 {
+#if USE_CONSOLE
 	Console::Open();
+#endif
 	
 	WNDCLASS windowClass = {};
 	windowClass.hInstance = hInstance;
@@ -53,7 +58,8 @@ bool Engine::Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow)
 		return false;
 	}
 
-	int blockCount = 64;
+#if BLOCKS
+	int blockCount = 4;
 	if(blockCount <= 0)
 	{
 		Console::WriteLine("Block count cannot be less or equal to 0");
@@ -77,6 +83,7 @@ bool Engine::Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow)
 			_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, widthPerBlock, heightPerBlock, Color24::White * 0.3f));
 		}
 	}
+#endif
 
 	return true;
 }
@@ -106,8 +113,10 @@ void Engine::Shutdown()
 	CloseWindow(_windowHandle);
 	DestroyWindow(_windowHandle);
 
+#if USE_CONSOLE
 	system("pause");
 	Console::Close();
+#endif
 }
 
 void Engine::Run()
@@ -141,7 +150,32 @@ void Engine::Render()
 
 	Timer t;
 	t.Start();
-#if 0
+#if BLOCKS
+	auto blocksIt = _blocks.begin();
+	auto blocksEnd = _blocks.end();
+
+#if MULTITHREADED
+	std::vector<std::thread> threads;
+	for(blocksIt; blocksIt != blocksEnd; ++blocksIt)
+	{
+		threads.push_back(std::thread(&Engine::RenderBlock, this, (*blocksIt)));
+	}
+
+	auto threadIt = threads.begin();
+	auto threadEnd = threads.end();
+	for(threadIt; threadIt != threadEnd; ++threadIt)
+	{
+		(*threadIt).join();
+	}
+#else
+	for(blocksIt; blocksIt != blocksEnd; ++blocksIt)
+	{
+		(*blocksIt)->Clear();
+		(*blocksIt)->Render(_scene);
+		PresentBlockWork((*blocksIt));
+	}
+#endif //MULTITHREADED
+#else
 	_renderedImage = new Image(_windowWidth, _windowHeight, Color24::White * 0.3f);
 
 	_scene->Render(_renderedImage);
@@ -150,20 +184,18 @@ void Engine::Render()
 	RenderScreenPixels(_windowWidth * 0.5f, _windowWidth, 0, _windowHeight * 0.5f, _renderedImage->GetPixels());
 	RenderScreenPixels(0, _windowWidth * 0.5f, _windowHeight * 0.5f, _windowHeight, _renderedImage->GetPixels());
 	RenderScreenPixels(_windowWidth * 0.5f, _windowWidth, _windowHeight * 0.5f, _windowHeight, _renderedImage->GetPixels());
-#else
-	auto blocksIt = _blocks.begin();
-	auto blocksEnd = _blocks.end();
-	for(blocksIt; blocksIt != blocksEnd; ++blocksIt)
-	{
-		(*blocksIt)->Clear();
-		(*blocksIt)->Render(_scene);
-		PresentBlockWork((*blocksIt));
-	}
 
-#endif
+#endif //BLOCKS
 
 	float renderTime = t.GetElapsedTime();
 	Console::WriteFormat("Render took: %f s\n", renderTime);
+}
+
+void Engine::RenderBlock(Block* b) const
+{
+	b->Clear();
+	b->Render(_scene);
+	PresentBlockWork(b);
 }
 
 void Engine::SaveRenderedImage()

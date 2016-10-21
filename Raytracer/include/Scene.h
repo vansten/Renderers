@@ -7,8 +7,6 @@
 
 #include "Image.h"
 
-#define ORTHO 1
-
 class Scene
 {
 protected:

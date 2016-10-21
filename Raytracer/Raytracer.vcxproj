@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Block.h" />
+    <ClInclude Include="include\Defines.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Image.h" />
     <ClInclude Include="include\Mesh.h" />

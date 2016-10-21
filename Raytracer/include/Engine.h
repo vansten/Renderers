@@ -39,6 +39,7 @@ public:
 	void Exit();
 
 	void Render();
+	void RenderBlock(Block* b) const;
 	void SaveRenderedImage();
 
 	void RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels) const;
