@@ -31,14 +31,14 @@ public:
 	};
 
 public:
-	static Color32 Black;
-	static Color32 Red;
-	static Color32 Green;
-	static Color32 Blue;
-	static Color32 Yellow;
-	static Color32 Magenta;
-	static Color32 Cyan;
-	static Color32 White;
+	static const Color32 Black;
+	static const Color32 Red;
+	static const Color32 Green;
+	static const Color32 Blue;
+	static const Color32 Yellow;
+	static const Color32 Magenta;
+	static const Color32 Cyan;
+	static const Color32 White;
 
 public:
 	Color32() : Value(0) {}
@@ -98,4 +98,89 @@ public:
 		c.A += other.A;
 		return c;
 	}
+};
+
+struct Color24
+{
+public:
+	static const Color24 Black;
+	static const Color24 Red;
+	static const Color24 Green;
+	static const Color24 Blue;
+	static const Color24 Yellow;
+	static const Color24 Magenta;
+	static const Color24 Cyan;
+	static const Color24 White;
+
+public:
+	float R;
+	float G;
+	float B;
+
+	Color24(float r = 0.0f, float g = 0.0f, float b = 0.0f) : R(clamp(r)), G(clamp(g)), B(clamp(b)) {}
+
+	Color24 operator+(const Color24& c) const
+	{
+		return Color24(R + c.R, G + c.G, B + c.B);
+	}
+
+	Color24 operator-(const Color24& c) const
+	{
+		return Color24(R - c.R, G - c.G, B - c.B);
+	}
+
+	void operator+=(const Color24& c)
+	{
+		R = clamp(R + c.R);
+		G = clamp(G + c.G);
+		B = clamp(B + c.B);
+	}
+
+	void operator-=(const Color24& c)
+	{
+		R = clamp(R - c.R);
+		G = clamp(G - c.G);
+		B = clamp(B - c.B);
+	}
+
+	Color24 operator*(const float s) const
+	{
+		return Color24(R * s, G * s, B * s);
+	}
+
+	Color24 operator*(const Color24& c) const
+	{
+		return Color24(R * c.R, G * c.G, B * c.B);
+	}
+
+	Color24 operator/(const float s) const
+	{
+		return (*this) * (1.0f / s);
+	}
+
+	void operator*=(const float s)
+	{
+		R = clamp(R * s);
+		G = clamp(G * s);
+		B = clamp(B * s);
+	}
+
+	void operator*=(const Color24& c)
+	{
+		R = clamp(R * c.R);
+		G = clamp(G * c.G);
+		B = clamp(B * c.B);
+	}
+
+	void operator/=(const float s)
+	{
+		(*this) *= (1.0f / s);
+	}
+
+	operator uint32() const
+	{
+		return make(R * 255, G * 255, B * 255, 255);
+	}
+
+	friend Color24 operator*(const float s, const Color24& c);
 };

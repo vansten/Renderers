@@ -125,7 +125,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Shape.cpp" />
     <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Plane.cpp" />
@@ -136,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine.h" />
+    <ClInclude Include="include\Image.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\Ray.h" />

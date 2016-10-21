@@ -12,9 +12,9 @@ protected:
 
 public:
 
-	Plane();
-	Plane(float x0, float y0, float z0, float nx, float ny, float nz);
-	Plane(Vector3 point, Vector3 normal);
+	Plane(Color24 color = Color24::Magenta);
+	Plane(float x0, float y0, float z0, float nx, float ny, float nz, Color24 color = Color24::Magenta);
+	Plane(Vector3 point, Vector3 normal, Color24 color = Color24::Magenta);
 	~Plane();
 
 	virtual void Init() override;

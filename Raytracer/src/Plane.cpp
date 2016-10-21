@@ -1,10 +1,19 @@
 #include "../include/Plane.h"
 
-Plane::Plane() : _planePoint(0, 0, 0), _normal(0, 1, 0), _d(0) {}
+Plane::Plane(Color24 color) : _planePoint(0, 0, 0), _normal(0, 1, 0), _d(0)
+{
+	Color = color;
+}
 
-Plane::Plane(float x0, float y0, float z0, float nx, float ny, float nz) : _planePoint(x0, y0, z0), _normal(nx, ny, nz), _d(0) {}
+Plane::Plane(float x0, float y0, float z0, float nx, float ny, float nz, Color24 color) : _planePoint(x0, y0, z0), _normal(nx, ny, nz), _d(0)
+{
+	Color = color;
+}
 
-Plane::Plane(Vector3 point, Vector3 normal) : _planePoint(point), _normal(normal), _d(0) {}
+Plane::Plane(Vector3 point, Vector3 normal, Color24 color) : _planePoint(point), _normal(normal), _d(0)
+{
+	Color = color;
+}
 
 Plane::~Plane() {}
 

@@ -118,8 +118,8 @@ public:
 	float LengthSquared() const
 	{
 #if USE_SIMD
-		__m128 l = _simdValue * _simdValue;
-		return sqrt(l.m128_f32[0] + l.m128_f32[1] + l.m128_f32[2] + l.m128_f32[3]);
+		__m128 l = _mm_mul_ps(_simdValue, _simdValue);
+		return l.m128_f32[0] + l.m128_f32[1] + l.m128_f32[2] + l.m128_f32[3];
 #else
 		float l = 0.0f;
 		for(int i = 0; i < N; ++i)

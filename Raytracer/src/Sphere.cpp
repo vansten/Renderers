@@ -2,11 +2,20 @@
 
 #include "Vector.h"
 
-Sphere::Sphere() : Center(), Radius(0.0f) {}
+Sphere::Sphere(Color24 color) : Center(), Radius(0.0f)
+{
+	Color = color;
+}
 
-Sphere::Sphere(Vector3 center, float radius) : Center(center), Radius(radius) {}
+Sphere::Sphere(Vector3 center, float radius, Color24 color) : Center(center), Radius(radius)
+{
+	Color = color;
+}
 
-Sphere::Sphere(float x0, float y0, float z0, float radius) : Center(x0, y0, z0), Radius(radius) {}
+Sphere::Sphere(float x0, float y0, float z0, float radius, Color24 color) : Center(x0, y0, z0), Radius(radius)
+{
+	Color = color;
+}
 
 Sphere::~Sphere() {}
 
@@ -31,7 +40,7 @@ bool Sphere::Intersects(const Ray& r, RaycastHit& hit) const
 	float a = Vector3::Dot(r.Direction, r.Direction);
 	float b = 2.0f * Vector3::Dot(r.Direction, v);
 	float c = Vector3::Dot(v, v) - Radius * Radius;
-	float det = b*b - 4 * a * c;
+	float det = (b*b) - (4 * a * c);
 	if(det >= 0.0f)
 	{
 		det = sqrt(det);

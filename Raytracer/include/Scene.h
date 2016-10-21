@@ -5,6 +5,8 @@
 #include "Shape.h"
 #include "Mesh.h"
 
+#include "Image.h"
+
 class Scene
 {
 protected:
@@ -16,8 +18,8 @@ public:
 	~Scene();
 
 	void Init();
-	void Update();
-	void RenderUnlit();
 	void Shutdown();
+
+	void Render(Image* _image) const;
 };
 

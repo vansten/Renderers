@@ -91,6 +91,45 @@ void TGASerializer::SaveTGA(const char* filename, const Texture* texture)
 	fclose(f);
 }
 
+void TGASerializer::SaveTGA(const char * filename, const Color24* source, int width, int height)
+{
+
+	FILE* f = 0;
+	fopen_s(&f, filename, "wb");
+	if(f == nullptr)
+	{
+		return;
+	}
+
+	putc(0, f); //idLength
+	putc(0, f); //colormap
+	putc(2, f); //image type = RGB
+	putc(0, f); putc(0, f); //colormaporigin
+	putc(0, f); putc(0, f); //colormaplength
+	putc(0, f); //colormapdepth
+	putc(0, f); //xorigin
+	putc(0, f); //xorigin
+	putc(0, f); //yorigin
+	putc(0, f); //yorigin
+	putc(width & 0x00FF, f); putc((width & 0xFF00) / 256, f); //width
+	putc(height & 0x00FF, f); putc((height & 0xFF00) / 256, f); //height
+	putc(24, f); //24 bits per pixel
+	putc(0, f); //imagedescriptor
+
+	for(int i = 0; i < width; ++i)
+	{
+		for(int j = 0; j < height; ++j)
+		{
+			Color24 pixel = source[i * height + j];
+			putc((uint8)(pixel.B * 255), f);
+			putc((uint8)(pixel.G * 255), f);
+			putc((uint8)(pixel.R * 255), f);
+		}
+	}
+
+	fclose(f);
+}
+
 void TGASerializer::LoadTGA(const char* filename, Texture** texture)
 {
 	FILE* f = nullptr;

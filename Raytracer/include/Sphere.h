@@ -8,9 +8,9 @@ public:
 	float Radius;
 
 public:
-	Sphere();
-	Sphere(Vector3 center, float radius);
-	Sphere(float x0, float y0, float z0, float radius);
+	Sphere(Color24 color = Color24::Magenta);
+	Sphere(Vector3 center, float radius, Color24 color = Color24::Magenta);
+	Sphere(float x0, float y0, float z0, float radius, Color24 color = Color24::Magenta);
 	virtual ~Sphere();
 
 	virtual void Init() override;
