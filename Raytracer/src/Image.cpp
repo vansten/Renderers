@@ -17,6 +17,7 @@ Image::~Image()
 	if(_pixels)
 	{
 		delete[] _pixels;
+		_pixels = 0;
 	}
 }
 

@@ -6,8 +6,6 @@
 #include "../include/Plane.h"
 #include "../include/Engine.h"
 
-#define ORTHO 1
-
 Scene::Scene()
 {
 }

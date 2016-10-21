@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include "Types.h"
+#include "Block.h"
 
 class Image;
 class Scene;
@@ -19,11 +20,12 @@ protected:
 	const int _windowHeight = 720;
 
 protected:
+	std::vector<Block*> _blocks;
 	Scene* _scene;
+	Image* _renderedImage;
 	HWND _windowHandle;
 	bool _bRunning;
 
-	Image* _renderedImage;
 
 	static Engine* _instance;
 public:
@@ -39,7 +41,8 @@ public:
 	void Render();
 	void SaveRenderedImage();
 
-	void RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels)const;
+	void RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels) const;
+	void PresentBlockWork(const Block* block) const;
 
 	static Engine* GetInstance();
 

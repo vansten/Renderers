@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\Shape.cpp" />
+    <ClCompile Include="src\Block.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="src\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Block.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Image.h" />
     <ClInclude Include="include\Mesh.h" />

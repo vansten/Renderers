@@ -7,6 +7,8 @@
 
 #include "Image.h"
 
+#define ORTHO 1
+
 class Scene
 {
 protected:
@@ -21,5 +23,15 @@ public:
 	void Shutdown();
 
 	void Render(Image* _image) const;
+
+	inline const std::vector<Shape*> GetShapes()
+	{
+		return _shapes;
+	}
+
+	inline const std::vector<Mesh*> GetMeshes()
+	{
+		return _meshes;
+	}
 };
 

@@ -4,6 +4,7 @@
 #include "../include/Image.h"
 #include "../include/TGASerializer.h"
 #include "../include/Timer.h"
+#include "../include/Block.h"
 
 Engine* Engine::_instance = 0;
 
@@ -52,11 +53,43 @@ bool Engine::Init(HINSTANCE hInstance, LPSTR commandLine, int nCmdShow)
 		return false;
 	}
 
+	int blockCount = 64;
+	if(blockCount <= 0)
+	{
+		Console::WriteLine("Block count cannot be less or equal to 0");
+		return false;
+	}
+	else if(blockCount % 2 != 0)
+	{
+		Console::WriteLine("Block count should be divisible by 2");
+		return false;
+	}
+
+	int x = blockCount / 2;
+	int y = x;
+	int widthPerBlock = _windowWidth / x;
+	int heightPerBlock = _windowHeight / y;
+
+	for(int i = 0; i < x; ++i)
+	{
+		for(int j = 0; j < y; ++j)
+		{
+			_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, widthPerBlock, heightPerBlock, Color24::White * 0.3f));
+		}
+	}
+
 	return true;
 }
 
 void Engine::Shutdown()
 {
+	auto blocksIt = _blocks.begin();
+	auto blocksEnd = _blocks.end();
+	for(blocksIt; blocksIt != blocksEnd; ++blocksIt)
+	{
+		delete (*blocksIt);
+	}
+
 	if (_scene)
 	{
 		_scene->Shutdown();
@@ -100,22 +133,37 @@ void Engine::Exit()
 
 void Engine::Render()
 {
-	Timer t;
-	t.Start();
 	if(_renderedImage)
 	{
 		delete _renderedImage;
 		_renderedImage = 0;
 	}
 
+	Timer t;
+	t.Start();
+#if 0
 	_renderedImage = new Image(_windowWidth, _windowHeight, Color24::White * 0.3f);
+
 	_scene->Render(_renderedImage);
 
 	RenderScreenPixels(0, _windowWidth * 0.5f, 0, _windowHeight * 0.5f, _renderedImage->GetPixels());
 	RenderScreenPixels(_windowWidth * 0.5f, _windowWidth, 0, _windowHeight * 0.5f, _renderedImage->GetPixels());
 	RenderScreenPixels(0, _windowWidth * 0.5f, _windowHeight * 0.5f, _windowHeight, _renderedImage->GetPixels());
 	RenderScreenPixels(_windowWidth * 0.5f, _windowWidth, _windowHeight * 0.5f, _windowHeight, _renderedImage->GetPixels());
-	Console::WriteFormat("Render took: %f s\n", (float)t.GetElapsedTime());
+#else
+	auto blocksIt = _blocks.begin();
+	auto blocksEnd = _blocks.end();
+	for(blocksIt; blocksIt != blocksEnd; ++blocksIt)
+	{
+		(*blocksIt)->Clear();
+		(*blocksIt)->Render(_scene);
+		PresentBlockWork((*blocksIt));
+	}
+
+#endif
+
+	float renderTime = t.GetElapsedTime();
+	Console::WriteFormat("Render took: %f s\n", renderTime);
 }
 
 void Engine::SaveRenderedImage()
@@ -156,9 +204,53 @@ void Engine::RenderScreenPixels(int left, int right, int bottom, int top, const 
 	_bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
 	_bitmapInfo.bmiHeader.biClrUsed = 0;
 	_bitmapInfo.bmiHeader.biClrImportant = 0;
-	RECT r;
-	GetClientRect(_windowHandle, &r);
-	StretchDIBits(GetDC(_windowHandle), left, _windowHeight * 0.5f - bottom, width, height, left, bottom, width, height, uintpixels, &_bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+	StretchDIBits(GetDC(_windowHandle),
+				  left, _windowHeight * 0.5f - bottom, width, height,
+				  left, bottom, width, height,
+				  uintpixels,
+				  &_bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+
+	delete[] uintpixels;
+}
+
+void Engine::PresentBlockWork(const Block* block) const
+{
+	if(!block)
+	{
+		return;
+	}
+
+	int width = block->GetWidth();
+	int height = block->GetHeight();
+	const Color24* pixels = block->GetPixels();
+
+	uint32* uintpixels = new uint32[width * height];
+	for(int i = 0; i < width; ++i)
+	{
+		for(int j = 0; j < height; ++j)
+		{
+			Color24 pixel = pixels[j * width + i];
+			uintpixels[j * width + i] = make(pixel.R * 255, pixel.G * 255, pixel.B * 255, 255);
+		}
+	}
+
+	BITMAPINFO _bitmapInfo = {};
+	_bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	_bitmapInfo.bmiHeader.biWidth = width;
+	_bitmapInfo.bmiHeader.biHeight = height;
+	_bitmapInfo.bmiHeader.biPlanes = 1;
+	_bitmapInfo.bmiHeader.biBitCount = 32;
+	_bitmapInfo.bmiHeader.biCompression = BI_RGB;
+	_bitmapInfo.bmiHeader.biSizeImage = 0;
+	_bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
+	_bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
+	_bitmapInfo.bmiHeader.biClrUsed = 0;
+	_bitmapInfo.bmiHeader.biClrImportant = 0;
+	StretchDIBits(GetDC(_windowHandle),
+				  block->GetX(), _windowHeight - height - block->GetY(), width, height,
+				  0, 0, width, height,
+				  uintpixels, 
+				  &_bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 
 	delete[] uintpixels;
 }
