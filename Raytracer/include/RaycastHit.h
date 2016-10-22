@@ -3,17 +3,19 @@
 #include <vector>
 #include "Vector.h"
 
-class RaycastHit
+namespace raytracer
 {
-protected:
-	std::vector<Vector3> _intersectionPoints;
+	class RaycastHit
+	{
+	protected:
+		std::vector<Vector3> _intersectionPoints;
 
-public:
-	RaycastHit();
-	virtual ~RaycastHit();
+	public:
+		RaycastHit();
+		virtual ~RaycastHit();
 
-	void AddIntersectionPoint(const Vector3& p);
-	const std::vector<Vector3>& GetIntersectionPoints();
-	void Clear();
-};
-
+		void AddIntersectionPoint(const Vector3& p);
+		const std::vector<Vector3>& GetIntersectionPoints();
+		void Clear();
+	};
+}

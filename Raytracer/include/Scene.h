@@ -7,29 +7,31 @@
 
 #include "Image.h"
 
-class Scene
+namespace raytracer
 {
-protected:
-	std::vector<Shape*> _shapes;
-	std::vector<Mesh*> _meshes;
-
-public:
-	Scene();
-	~Scene();
-
-	void Init();
-	void Shutdown();
-
-	void Render(Image* _image) const;
-
-	inline const std::vector<Shape*> GetShapes()
+	class Scene
 	{
-		return _shapes;
-	}
+	protected:
+		std::vector<Shape*> _shapes;
+		std::vector<Mesh*> _meshes;
 
-	inline const std::vector<Mesh*> GetMeshes()
-	{
-		return _meshes;
-	}
-};
+	public:
+		Scene();
+		~Scene();
 
+		void Init();
+		void Shutdown();
+
+		void Render(Image* _image) const;
+
+		inline const std::vector<Shape*> GetShapes() const
+		{
+			return _shapes;
+		}
+
+		inline const std::vector<Mesh*> GetMeshes() const
+		{
+			return _meshes;
+		}
+	};
+}

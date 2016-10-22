@@ -2,20 +2,27 @@
 
 #include "Ray.h"
 #include "RaycastHit.h"
+#include "../include/Types.h"
 
-class Shape
+namespace raytracer
 {
-	friend class Ray;
-public:
-	Color24 Color;
+	class Shape
+	{
+		friend class Ray;
 
-public:
-	virtual void Init() = 0;
-	virtual void Shutdown() = 0;
-	virtual std::string ToString() const = 0;
-	virtual Color24 GetColor() const;
+	public:
+		Color24 Color;
 
-protected:
-	virtual bool Intersects(const Ray& r, RaycastHit& hit) const = 0;
-};
+	public:
+		Shape(Color24 color = Color24::Magenta);
+		Shape(const Shape& other);
+		virtual ~Shape();
+		virtual void Init();
+		virtual void Shutdown();
+		virtual std::string ToString() const;
+		virtual Color24 GetColor() const;
 
+	protected:
+		virtual bool Intersects(const Ray& r, RaycastHit& hit) const;
+	};
+}

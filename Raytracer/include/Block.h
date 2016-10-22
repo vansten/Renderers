@@ -3,54 +3,57 @@
 #include "../include/Image.h"
 #include "../include/Scene.h"
 
-class Block
+namespace raytracer
 {
-protected:
-	Image* _renderedImage;
-
-	Color24 _backgroundColor;
-	int _x0;
-	int _y0;
-	int _width;
-	int _height;
-
-public:
-	Block(int left, int bottom, int width, int height, Color24 backgroundColor = Color24::White);
-	~Block();
-	void Render(Scene* _scene);
-	void Clear();
-
-	inline int GetX() const
+	class Block
 	{
-		return _x0;
-	}
+	protected:
+		Image* _renderedImage;
 
-	inline int GetY() const
-	{
-		return _y0;
-	}
+		Color24 _backgroundColor;
+		int _x0;
+		int _y0;
+		int _width;
+		int _height;
 
-	inline int GetWidth() const
-	{
-		return _width;
-	}
+	public:
+		Block(int left, int bottom, int width, int height, Color24 backgroundColor = Color24::White);
+		~Block();
+		void Render(Scene* _scene);
+		void Clear();
 
-	inline int GetHeight() const
-	{
-		return _height;
-	}
-
-	inline const Color24* GetPixels() const
-	{
-		if(_renderedImage)
+		inline int GetX() const
 		{
-			return _renderedImage->GetPixels();
+			return _x0;
 		}
-		return nullptr;
-	}
 
-	inline const Image* GetRenderedImage() const
-	{
-		return _renderedImage;
-	}
-};
+		inline int GetY() const
+		{
+			return _y0;
+		}
+
+		inline int GetWidth() const
+		{
+			return _width;
+		}
+
+		inline int GetHeight() const
+		{
+			return _height;
+		}
+
+		inline const Color24* GetPixels() const
+		{
+			if(_renderedImage)
+			{
+				return _renderedImage->GetPixels();
+			}
+			return nullptr;
+		}
+
+		inline const Image* GetRenderedImage() const
+		{
+			return _renderedImage;
+		}
+	};
+}

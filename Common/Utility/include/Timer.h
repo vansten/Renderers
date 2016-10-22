@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Windows.h>
+#include <chrono>
 
 class Timer
 {
 protected:
-	double _frequency;
-	LARGE_INTEGER _timerStart;
+	std::chrono::high_resolution_clock _clock;
+	std::chrono::time_point<std::chrono::high_resolution_clock> _start;
 
 public:
 	Timer();

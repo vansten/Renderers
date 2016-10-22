@@ -8,113 +8,114 @@
 
 #include "../include/Defines.h"
 
-Scene::Scene()
+namespace raytracer
 {
-}
+	Scene::Scene()
+	{}
 
-Scene::~Scene()
-{
-}
+	Scene::~Scene()
+	{}
 
-void Scene::Init()
-{
-	Sphere* s = new Sphere(1.0f, 0.0f, 0, 0.1f, Color24::Blue);
-	_shapes.push_back(s);
-	s = new Sphere(-1.0f, 0.0f, 0.0f, 0.1f, Color24::Red);
-	_shapes.push_back(s);
-
-	auto it = _shapes.begin();
-	auto end = _shapes.end();
-	for(it; it != end; ++it)
+	void Scene::Init()
 	{
-		(*it)->Init();
-	}
+		Sphere* s = new Sphere(-1.0f, 0.0f, 0.0f, 0.2f, Color24::Blue);
+		_shapes.push_back(s);
+		s = new Sphere(1.0f, 0.0f, 0.0f, 0.2f, Color24::Red);
+		_shapes.push_back(s);
 
-	auto meshesIt = _meshes.begin();
-	auto meshesEnd = _meshes.end();
-	for(meshesIt; meshesIt != meshesEnd; ++meshesIt)
-	{
-		if(!(*meshesIt)->Init())
+		auto it = _shapes.begin();
+		auto end = _shapes.end();
+		for(it; it != end; ++it)
 		{
-			Console::WriteLine("Couldn't initialize mesh");
+			(*it)->Init();
+		}
+
+		auto meshesIt = _meshes.begin();
+		auto meshesEnd = _meshes.end();
+		for(meshesIt; meshesIt != meshesEnd; ++meshesIt)
+		{
+			if(!(*meshesIt)->Init())
+			{
+				Console::WriteLine("Couldn't initialize mesh");
+			}
 		}
 	}
-}
 
-void Scene::Shutdown()
-{
-	auto it = _shapes.begin();
-	auto end = _shapes.end();
-	for(it; it != end; ++it)
+	void Scene::Shutdown()
 	{
-		(*it)->Shutdown();
-		delete (*it);
-	}
-	_shapes.clear();
-
-	auto meshesIt = _meshes.begin();
-	auto meshesEnd = _meshes.end();
-	for(meshesIt; meshesIt != meshesEnd; ++meshesIt)
-	{
-		(*meshesIt)->Shutdown();
-		delete (*meshesIt);
-	}
-	_meshes.clear();
-}
-
-void Scene::Render(Image* _image) const
-{
-	if(!_image)
-	{
-		return;
-	}
-
-	int width = _image->GetWidth();
-	int height = _image->GetHeight();
-	RaycastHit hit;
-	auto shapesEnd = _shapes.end();
-	auto hitPoints = hit.GetIntersectionPoints();
-	float halfWidth = Engine::GetInstance()->GetWidth() * 0.5f;
-	float halfHeight = Engine::GetInstance()->GetHeight() * 0.5f;
-	float onePerAR = halfHeight / halfWidth;
-	float pixelWidth = 1.0f / halfWidth;
-	float pixelHeight = 1.0f / halfHeight;
-	for(int i = 0; i < width; ++i)
-	{
-		for(int j = 0; j < height; ++j)
+		auto it = _shapes.begin();
+		auto end = _shapes.end();
+		for(it; it != end; ++it)
 		{
-#if ORTHO
-			//Ray r(i / 1280.0f, j / 720.0f, -10.0f, 0.0f, 0.0f, 1.0f);
-			float x = -1.0f + (i + 0.5f) * pixelWidth;
-			float y = 1.0f - (j + 0.5f) * pixelHeight;
-			Ray r(x, y, -10.0f, 0.0f, 0.0f, 1.0f);
-			r.Origin[1] *= onePerAR;
-#else
-			Ray r(i, j, -10, 0, 0, 1);
-#endif
-			Shape* closestShape = nullptr;
-			float closestSq = FLT_MAX;
-			for(auto shapesIt = _shapes.begin(); shapesIt != shapesEnd; ++shapesIt)
+			(*it)->Shutdown();
+			delete (*it);
+		}
+		_shapes.clear();
+
+		auto meshesIt = _meshes.begin();
+		auto meshesEnd = _meshes.end();
+		for(meshesIt; meshesIt != meshesEnd; ++meshesIt)
+		{
+			(*meshesIt)->Shutdown();
+			delete (*meshesIt);
+		}
+		_meshes.clear();
+	}
+
+	void Scene::Render(Image* _image) const
+	{
+		if(!_image)
+		{
+			return;
+		}
+
+		int width = _image->GetWidth();
+		int height = _image->GetHeight();
+		RaycastHit hit;
+		auto shapesEnd = _shapes.end();
+		auto hitPoints = hit.GetIntersectionPoints();
+		float halfWidth = Engine::GetInstance()->GetWidth() * 0.5f;
+		float halfHeight = Engine::GetInstance()->GetHeight() * 0.5f;
+		float onePerAR = halfHeight / halfWidth;
+		float pixelWidth = 1.0f / halfWidth;
+		float pixelHeight = 1.0f / halfHeight;
+		for(int i = 0; i < width; ++i)
+		{
+			for(int j = 0; j < height; ++j)
 			{
-				if(r.Intersects(*(*shapesIt), hit))
+#if ORTHO
+				//Ray r(i / 1280.0f, j / 720.0f, -10.0f, 0.0f, 0.0f, 1.0f);
+				float x = -1.0f + (i + 0.5f) * pixelWidth;
+				float y = 1.0f - (j + 0.5f) * pixelHeight;
+				Ray r(x, y, -10.0f, 0.0f, 0.0f, 1.0f);
+				r.Origin[1] *= onePerAR;
+#else
+				Ray r(i, j, -10, 0, 0, 1);
+#endif
+				Shape* closestShape = nullptr;
+				float closestSq = FLT_MAX;
+				for(auto shapesIt = _shapes.begin(); shapesIt != shapesEnd; ++shapesIt)
 				{
-					hitPoints = hit.GetIntersectionPoints();
-					int hitPointsSize = hitPoints.size();
-					for(int k = 0; k < hitPointsSize; ++k)
+					if(r.Intersects(*(*shapesIt), hit))
 					{
-						float distSq = (hitPoints[k] - r.Origin).LengthSquared();
-						if(distSq < closestSq)
+						hitPoints = hit.GetIntersectionPoints();
+						int hitPointsSize = hitPoints.size();
+						for(int k = 0; k < hitPointsSize; ++k)
 						{
-							closestSq = distSq;
-							closestShape = (*shapesIt);
+							float distSq = (hitPoints[k] - r.Origin).LengthSquared();
+							if(distSq < closestSq)
+							{
+								closestSq = distSq;
+								closestShape = (*shapesIt);
+							}
 						}
 					}
 				}
-			}
 
-			if(closestShape != nullptr)
-			{
-				_image->SetPixel(i, j, closestShape->GetColor());
+				if(closestShape != nullptr)
+				{
+					_image->SetPixel(i, j, closestShape->GetColor());
+				}
 			}
 		}
 	}

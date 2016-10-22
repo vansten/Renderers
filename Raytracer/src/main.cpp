@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	int nCmdShow)
 {
 	{
-		Engine e;
+		raytracer::Engine e;
 		if (e.Init(hInstance, commandLine, nCmdShow))
 		{
 			e.Run();

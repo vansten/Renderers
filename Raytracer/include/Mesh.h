@@ -2,16 +2,18 @@
 
 #include "Shape.h"
 
-class Mesh
+namespace raytracer
 {
-protected:
-	Shape* _boundingShape;
+	class Mesh
+	{
+	protected:
+		Shape* _boundingShape;
 
-public:
-	Mesh();
-	~Mesh();
+	public:
+		Mesh();
+		~Mesh();
 
-	bool Init();
-	void Shutdown();
-};
-
+		bool Init();
+		void Shutdown();
+	};
+}

@@ -2,9 +2,6 @@
 
 Timer::Timer()
 {
-	LARGE_INTEGER pcFreq;
-	QueryPerformanceFrequency(&pcFreq);
-	_frequency = 1.0f / (pcFreq.QuadPart);
 }
 
 Timer::~Timer()
@@ -12,12 +9,10 @@ Timer::~Timer()
 
 void Timer::Start()
 {
-	QueryPerformanceCounter(&_timerStart);
+	_start = _clock.now();
 }
 
 double Timer::GetElapsedTime()
 {
-	LARGE_INTEGER li;
-	QueryPerformanceCounter(&li);
-	return (li.QuadPart - _timerStart.QuadPart) * _frequency;
+	return std::chrono::duration_cast<std::chrono::duration<double>>(_clock.now() - _start).count();
 }
