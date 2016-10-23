@@ -4,7 +4,7 @@
 
 #define BLOCKS 1
 #if BLOCKS
-#define MULTITHREADED 1
+#define MULTITHREADED 0
 #endif
 
 #define USE_CONSOLE 1

@@ -19,7 +19,7 @@ namespace raytracer
 	public:
 		Block(int left, int bottom, int width, int height, Color24 backgroundColor = Color24::White);
 		~Block();
-		void Render(Scene* _scene);
+		void Render(Scene* scene);
 		void Clear();
 
 		inline int GetX() const

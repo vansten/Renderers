@@ -21,14 +21,14 @@ namespace raytracer
 		}
 	}
 
-	void Block::Render(Scene* _scene)
+	void Block::Render(Scene* scene)
 	{
-		if(!_scene)
+		if(!scene)
 		{
 			return;
 		}
 
-		auto shapes = _scene->GetShapes();
+		auto shapes = scene->GetShapes();
 		auto shapesEnd = shapes.end();
 		float halfWidth = Engine::GetInstance()->GetWidth() * 0.5f;
 		float halfHeight = Engine::GetInstance()->GetHeight() * 0.5f;
@@ -41,19 +41,26 @@ namespace raytracer
 		auto hitPoints = hit.GetIntersectionPoints();
 		Shape* closestShape = nullptr;
 		float closestSq = FLT_MAX;
+		Ray r;
+		Vector3 origin;
+		Vector3 direction = Vector3(0, 0, 1);
 
 		for(int i = _x0; i < maxI; ++i)
 		{
 			for(int j = _y0; j < maxY; ++j)
 			{
 #if ORTHO
-				float x = -1.0f + (i + 0.5f) * pixelWidth;
-				float y = 1.0f - (j + 0.5f) * pixelHeight;
-				Ray r(x, y, -10.0f, 0.0f, 0.0f, 1.0f);
-				r.Origin[1] *= onePerAR;
+				origin[0] = -1.0f + (i + 0.5f) * pixelWidth;
+				origin[1] = 1.0f - (j + 0.5f) * pixelHeight;
+				origin[2] = -10.0f;
 #else
-				Ray r(i, j, -10, 0, 0, 1);
+				origin[0] = (i / halfWidth) - 1.0f;
+				origin[1] = (j / halfHeight) - 1.0f;
+				origin[2] = -10.0f;
 #endif
+				r.Origin = origin;
+				r.Direction = direction;
+				r.Origin[1] *= onePerAR;
 				closestShape = nullptr;
 				closestSq = FLT_MAX;
 				for(auto shapesIt = shapes.begin(); shapesIt != shapesEnd; ++shapesIt)

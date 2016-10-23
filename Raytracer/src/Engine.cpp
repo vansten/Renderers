@@ -68,7 +68,7 @@ namespace raytracer
 #endif
 
 		int blockCount = 16;
-		blockCount = min(_threadCount, blockCount);
+		blockCount = max(_threadCount, blockCount);
 		if(blockCount % 2 != 0)
 		{
 			Console::WriteLine("Block count should be divisible by 2");

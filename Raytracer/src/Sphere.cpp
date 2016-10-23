@@ -2,8 +2,6 @@
 
 #include "Vector.h"
 
-#include <mutex>
-
 namespace raytracer
 {
 	Sphere::Sphere(Color24 color) : Center(), Radius(0.0f), Shape(color)
@@ -48,8 +46,6 @@ namespace raytracer
 
 	bool Sphere::Intersects(const Ray& r, RaycastHit& hit) const
 	{
-		static std::mutex mutex;
-		std::unique_lock<std::mutex> lock(mutex);
 		Vector3 v = r.Origin - Center;
 		float a = Vector3::Dot(r.Direction, r.Direction);
 		float b = 2.0f * Vector3::Dot(r.Direction, v);

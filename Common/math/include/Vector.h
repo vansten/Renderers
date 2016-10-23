@@ -173,7 +173,7 @@ public:
 
 	Vector<N> operator-() const
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		static __m128 minusOne = _mm_set_ps(-1.0f, -1.0f, -1.0f, -1.0f);
 		vec._simdValue = _mm_mul_ps(_simdValue, minusOne);
@@ -188,7 +188,7 @@ public:
 
 	Vector<N> operator+()
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		vec._simdValue = _simdValue;
 #else
@@ -202,7 +202,7 @@ public:
 
 	Vector<N> operator-(Vector<N> other) const
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		vec._simdValue = _mm_sub_ps(_simdValue, other._simdValue);
 #else
@@ -216,7 +216,7 @@ public:
 
 	Vector<N> operator+(Vector<N> other) const
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		vec._simdValue = _mm_add_ps(_simdValue, other._simdValue);
 #else
@@ -230,7 +230,7 @@ public:
 
 	Vector<N> operator*(const Vector<N>& other) const
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		vec._simdValue = _mm_mul_ps(_simdValue, other._simdValue);
 #else
@@ -244,7 +244,7 @@ public:
 
 	Vector<N> operator*(float s) const
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		__m128 sSimd = _mm_set_ps(s, s, s, s);
 		vec._simdValue = _mm_mul_ps(sSimd, _simdValue);
@@ -259,7 +259,7 @@ public:
 
 	Vector<N> operator/(float s) const
 	{
-		static Vector<N> vec;
+		Vector<N> vec;
 #if USE_SIMD
 		__m128 sSimd = _mm_set_ps(s, s, s, s);
 		vec._simdValue = _mm_div_ps(_simdValue, sSimd);
@@ -321,7 +321,7 @@ public:
 
 	static Vector<N> Clamp(const Vector<N>& value, const Vector<N>& min = Vector<N>::Zero, const Vector<N>& max = Vector<N>::One)
 	{
-		static Vector<N> v;
+		Vector<N> v;
 		for(int i = 0; i < N; ++i)
 		{
 			v._components[i] = fmin(fmax(min[i], value[i]), max[i]);
@@ -363,7 +363,7 @@ public:
 
 	static Vector<N> Lerp(const Vector<N>& from, const Vector<N>& to, float t)
 	{
-		static Vector<N> v;
+		Vector<N> v;
 #if USE_SIMD
 		__m128 tSimd = _mm_set_ps(t, t, t, t);
 		__m128 oneMinusTSimd = _mm_set_ps(1.0f - t, 1.0f - t, 1.0f - t, 1.0f - t);
