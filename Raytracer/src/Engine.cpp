@@ -62,7 +62,11 @@ namespace raytracer
 #if BLOCKS
 
 #if MULTITHREADED
+#if PC
 		_threadCount = 4;
+#else
+		_threadCount = 8;
+#endif
 #else
 		_threadCount = 1;
 #endif
@@ -164,11 +168,13 @@ namespace raytracer
 		int blocksPerThread = _blocks.size() / _threadCount;
 		std::vector<std::thread> threads;
 		int start = 0;
-		for(int i = 0; i < _threadCount; ++i)
+		for(int i = 0; i < _threadCount - 1; ++i)
 		{
 			threads.push_back(std::thread(&Engine::RenderBlocks, this, start, blocksPerThread));
 			start += blocksPerThread;
 		}
+
+		RenderBlocks(start, blocksPerThread);
 
 		auto threadsIt = threads.begin();
 		auto threadsEnd = threads.end();
