@@ -126,7 +126,7 @@ public:
 
 	Color24 operator-(const Color24& c) const
 	{
-		return Color24(R - c.R, G - c.G, B - c.B);
+		return Color24(fabs(R - c.R), fabs(G - c.G), fabs(B - c.B));
 	}
 
 	void operator+=(const Color24& c)

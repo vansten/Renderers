@@ -2,6 +2,7 @@
 
 #include "../include/Image.h"
 #include "../include/Scene.h"
+#include "../include/Pixel.h"
 
 namespace raytracer
 {
@@ -23,7 +24,7 @@ namespace raytracer
 		~Block();
 		void Render(const Scene* scene, const Camera* camera);
 		Color24 CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd);
-		Color24 CastRays(const Ray& r, int howManyRays, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd);
+		Color24 CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera);
 		void Clear();
 
 		inline int GetX() const

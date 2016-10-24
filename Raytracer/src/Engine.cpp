@@ -13,7 +13,7 @@ namespace raytracer
 {
 	Engine* Engine::_instance = 0;
 
-	Engine::Engine() : _scene(0), _renderedImage(0)
+	Engine::Engine() : _scene(0), _renderedImage(0), _camera(0)
 	{
 		_instance = this;
 	}
@@ -51,9 +51,13 @@ namespace raytracer
 
 		HMENU mainMenu = CreateMenu();
 		AppendMenu(mainMenu, MF_STRING, (UINT)MenuCommands::RENDER_IMAGE, "Render");
-
 		SetMenu(_windowHandle, mainMenu);
+		
 		ShowWindow(_windowHandle, nCmdShow);
+
+		Image* i = new Image(_windowWidth, _windowHeight, Color24::Black);
+		RenderScreenPixels(0, _windowWidth, 0, _windowHeight, i->GetPixels());
+		delete i;
 
 		if(!SetupScene())
 		{
@@ -73,7 +77,7 @@ namespace raytracer
 		_threadCount = 1;
 #endif
 
-		int blockCount = 16;
+		int blockCount = 128;
 		blockCount = max(_threadCount, blockCount);
 		if(blockCount % 2 != 0)
 		{
@@ -116,6 +120,12 @@ namespace raytracer
 		for(blocksIt; blocksIt != blocksEnd; ++blocksIt)
 		{
 			delete (*blocksIt);
+		}
+
+		if(_camera)
+		{
+			delete _camera;
+			_camera = 0;
 		}
 
 		if(_scene)
@@ -220,6 +230,7 @@ namespace raytracer
 		{
 			RenderBlock(_blocks.at(i));
 		}
+
 	}
 
 	void Engine::SaveRenderedImage()
@@ -243,7 +254,7 @@ namespace raytracer
 		{
 			for(int j = 0; j < _windowHeight; ++j)
 			{
-				Color24 pixel = _renderedImage->GetPixel(i, j);
+				Color24 pixel = pixels[j * _windowWidth + i];
 				uintpixels[j * _windowWidth + i] = make(pixel.R * 255, pixel.G * 255, pixel.B * 255, 255);
 			}
 		}
@@ -261,7 +272,7 @@ namespace raytracer
 		_bitmapInfo.bmiHeader.biClrUsed = 0;
 		_bitmapInfo.bmiHeader.biClrImportant = 0;
 		StretchDIBits(GetDC(_windowHandle),
-					  left, _windowHeight * 0.5f - bottom, width, height,
+					  left, bottom, width, height,
 					  left, bottom, width, height,
 					  uintpixels,
 					  &_bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
@@ -304,7 +315,7 @@ namespace raytracer
 											0 //clrimportant
 		};
 		StretchDIBits(GetDC(_windowHandle),
-					  block->GetX(), _windowHeight - height - block->GetY(), width, height,
+					  block->GetX(), _windowHeight - block->GetY() - 2 * height, width, height,
 					  0, 0, width, height,
 					  uintpixels,
 					  &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
@@ -342,6 +353,10 @@ namespace raytracer
 			if(wParam == VK_ESCAPE)
 			{
 				Engine::GetInstance()->Exit();
+			}
+			else if(wParam == VK_F5)
+			{
+				Engine::GetInstance()->Render();
 			}
 			break;
 		case WM_COMMAND:

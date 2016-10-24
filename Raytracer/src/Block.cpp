@@ -55,8 +55,12 @@ namespace raytracer
 				else
 				{
 #endif
+#if ANTI_ALIASING
+					_renderedImage->SetPixel(i - _x0, j - _y0, CastRays(pixel, MAX_STEPS, pixelWidth, pixelHeight, shapesBegin, shapesEnd, camera));
+#else
 					camera->ConstructRay(r, pixel);
 					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd));
+#endif
 #if DRAW_GRID
 				}
 #endif
@@ -95,9 +99,70 @@ namespace raytracer
 		return _backgroundColor;
 	}
 
-	Color24 Block::CastRays(const Ray& r, int howManyRays, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd)
+	Color24 Block::CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera)
 	{
-		return _backgroundColor;
+		if(maxSteps == 0)
+		{
+			Ray r;
+			camera->ConstructRay(r, center);
+			return CastRay(r, shapesBegin, shapesEnd);
+		}
+
+		float halfPixelW = 0.5f * pixelWidth;
+		float halfPixelH = 0.5f * pixelHeight;
+		Pixel corners[4] = {center, center, center, center};
+		
+		corners[0].X -= halfPixelW;
+		corners[0].Y -= halfPixelH;
+
+		corners[1].X -= halfPixelW;
+		corners[1].Y += halfPixelH;
+		
+		corners[2].X += halfPixelW;
+		corners[2].Y -= halfPixelH;
+		
+		corners[3].X += halfPixelW;
+		corners[3].Y += halfPixelH;
+
+		Ray rays[4];
+		Color24 colors[4];
+		for(int i = 0; i < 4; ++i)
+		{
+			camera->ConstructRay(rays[i], corners[i]);
+			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd);
+		}
+
+		Color24 diff(0, 0, 0);
+		for(int i = 0; i < 3; ++i)
+		{
+			for(int j = i + 1; j < 4; ++j)
+			{
+				diff += colors[j] - colors[i];
+			}
+		}
+
+		if(diff.R > 0.05f || diff.G > 0.05f || diff.B > 0.05f)
+		{
+			Pixel subCenters[4];
+			subCenters[0].X = center.X - halfPixelW * 0.25f;
+			subCenters[0].Y = center.Y - halfPixelH * 0.25f;
+
+			subCenters[1].X = center.X - halfPixelW * 0.25f;
+			subCenters[1].Y = center.Y + halfPixelH * 0.25f;
+
+			subCenters[2].X = center.X + halfPixelW * 0.25f;
+			subCenters[2].Y = center.Y - halfPixelH * 0.25f;
+
+			subCenters[3].X = center.X + halfPixelW * 0.25f;
+			subCenters[3].Y = center.Y + halfPixelH * 0.25f;
+
+			for(int i = 0; i < 4; ++i)
+			{
+				colors[i] = CastRays(subCenters[i], maxSteps - 1, halfPixelW, halfPixelH, shapesBegin, shapesEnd, camera);
+			}
+		}
+
+		return 0.25f * colors[0] + 0.25f * colors[1] + 0.25f * colors[2] + 0.25f * colors[3];
 	}
 
 	void Block::Clear()
