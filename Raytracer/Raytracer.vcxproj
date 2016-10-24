@@ -126,10 +126,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Block.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\OrthoCamera.cpp" />
+    <ClCompile Include="src\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\RaycastHit.cpp" />
@@ -139,10 +142,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Block.h" />
+    <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Defines.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Image.h" />
     <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\OrthoCamera.h" />
+    <ClInclude Include="include\PerspectiveCamera.h" />
+    <ClInclude Include="include\Pixel.h" />
     <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\Ray.h" />
     <ClInclude Include="include\RaycastHit.h" />

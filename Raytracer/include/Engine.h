@@ -5,10 +5,14 @@
 #include "Types.h"
 #include "Block.h"
 
+#include "../include/OrthoCamera.h"
+#include "../include/PerspectiveCamera.h"
+
 namespace raytracer
 {
 	class Image;
 	class Scene;
+	class Camera;
 
 	enum class MenuCommands
 	{
@@ -20,11 +24,14 @@ namespace raytracer
 	protected:
 		const int _windowWidth = 1280;
 		const int _windowHeight = 720;
+		float _pixelWidth;
+		float _pixelHeight;
 
 	protected:
 		std::vector<Block*> _blocks;
 		Scene* _scene;
 		Image* _renderedImage;
+		Camera* _camera;
 		HWND _windowHandle;
 		int _threadCount;
 		bool _bRunning;
@@ -58,6 +65,16 @@ namespace raytracer
 		inline int GetHeight() const
 		{
 			return _windowHeight;
+		}
+
+		inline float GetPixelWidth() const
+		{
+			return _pixelWidth;
+		}
+
+		inline float GetPixelHeight() const
+		{
+			return _pixelHeight;
 		}
 
 	protected:

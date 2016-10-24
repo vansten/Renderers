@@ -18,12 +18,10 @@ namespace raytracer
 
 	void Scene::Init()
 	{
-		Sphere* s = new Sphere(-1.0f, 0.0f, 0.0f, 0.2f, Color24::Blue);
+		Sphere* s = new Sphere(-3.0f, 0.0f, 0.0f, 0.8f, Color24::Blue);
 		_shapes.push_back(s);
-		s = new Sphere(1.0f, 0.0f, 0.0f, 0.2f, Color24::Red);
+		s = new Sphere(1.0f, 0.0f, 0.0f, 0.6f, Color24::Red);
 		_shapes.push_back(s);
-		Plane* p = new Plane(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, -1.0f, Color24::Yellow);
-		_shapes.push_back(p);
 
 		auto it = _shapes.begin();
 		auto end = _shapes.end();

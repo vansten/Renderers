@@ -27,6 +27,8 @@ namespace raytracer
 #if USE_CONSOLE
 		Console::Open();
 #endif
+		_pixelWidth = 2.0f / (float)_windowWidth;
+		_pixelHeight = 2.0f / (float)_windowHeight;
 
 		WNDCLASS windowClass = {};
 		windowClass.hInstance = hInstance;
@@ -96,6 +98,12 @@ namespace raytracer
 			usedWidth += widthPerBlock;
 			usedHeight = 0;
 		}
+#endif
+
+#if ORTHO
+		_camera = new OrthoCamera(ORTHO_SIZE, -10.0f);
+#else
+		_camera = new PerspectiveCamera(60.0f, 0.001f, 1000.0f);
 #endif
 
 		return true;
@@ -201,7 +209,7 @@ namespace raytracer
 	void Engine::RenderBlock(Block* b) const
 	{
 		b->Clear();
-		b->Render(_scene);
+		b->Render(_scene, _camera);
 		PresentBlockWork(b);
 	}
 

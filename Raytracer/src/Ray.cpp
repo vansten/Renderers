@@ -19,7 +19,9 @@ namespace raytracer
 	}
 
 	Ray::Ray(const Ray& r) : Origin(r.Origin), Direction(r.Direction)
-	{}
+	{
+		Direction.Normalize();
+	}
 
 
 	Ray::~Ray()

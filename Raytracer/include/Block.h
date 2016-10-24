@@ -5,6 +5,8 @@
 
 namespace raytracer
 {
+	class Camera;
+
 	class Block
 	{
 	protected:
@@ -19,7 +21,9 @@ namespace raytracer
 	public:
 		Block(int left, int bottom, int width, int height, Color24 backgroundColor = Color24::White);
 		~Block();
-		void Render(Scene* scene);
+		void Render(const Scene* scene, const Camera* camera);
+		Color24 CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd);
+		Color24 CastRays(const Ray& r, int howManyRays, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd);
 		void Clear();
 
 		inline int GetX() const
