@@ -179,6 +179,14 @@ namespace raytracer
 			_renderedImage = 0;
 		}
 
+		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::Black);
+		if(_renderedImage)
+		{
+			RenderScreenPixels(0, _windowWidth, 0, _windowHeight, _renderedImage->GetPixels());
+			delete _renderedImage;
+			_renderedImage = 0;
+		}
+
 		Timer t;
 		t.Start();
 #if BLOCKS
@@ -204,11 +212,7 @@ namespace raytracer
 		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::White * 0.3f);
 
 		_scene->Render(_renderedImage);
-
-		RenderScreenPixels(0, _windowWidth * 0.5f, 0, _windowHeight * 0.5f, _renderedImage->GetPixels());
-		RenderScreenPixels(_windowWidth * 0.5f, _windowWidth, 0, _windowHeight * 0.5f, _renderedImage->GetPixels());
-		RenderScreenPixels(0, _windowWidth * 0.5f, _windowHeight * 0.5f, _windowHeight, _renderedImage->GetPixels());
-		RenderScreenPixels(_windowWidth * 0.5f, _windowWidth, _windowHeight * 0.5f, _windowHeight, _renderedImage->GetPixels());
+		RenderScreenPixels(0, _windowWidth, 0, _windowHeight, _renderedImage->GetPixels());
 
 #endif //BLOCKS
 

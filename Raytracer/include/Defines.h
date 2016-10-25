@@ -3,7 +3,7 @@
 #define ORTHO 1
 #define ORTHO_SIZE 3.0f
 
-#define PC 1
+#define PC 0
 
 #define BLOCKS 1
 #if BLOCKS
