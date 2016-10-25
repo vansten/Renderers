@@ -77,7 +77,7 @@ namespace raytracer
 		_threadCount = 1;
 #endif
 
-		int blockCount = 128;
+		int blockCount = 16;
 		blockCount = max(_threadCount, blockCount);
 		if(blockCount % 2 != 0)
 		{
@@ -85,7 +85,7 @@ namespace raytracer
 			return false;
 		}
 
-		int x = blockCount / 2;
+		int x = sqrt(blockCount);
 		int y = x;
 		int widthPerBlock = _windowWidth / x;
 		int heightPerBlock = _windowHeight / y;
@@ -187,6 +187,10 @@ namespace raytracer
 			_renderedImage = 0;
 		}
 
+#if SAVE_TO_FILE
+		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::Black);
+#endif
+
 		Timer t;
 		t.Start();
 #if BLOCKS
@@ -218,6 +222,13 @@ namespace raytracer
 
 		float renderTime = t.GetElapsedTime();
 		Console::WriteFormat("Render took: %f s\n", renderTime);
+
+#if SAVE_TO_FILE
+		TGASerializer::SaveTGA("test.tga", _renderedImage->GetPixels(), _windowWidth, _windowHeight);
+
+		delete _renderedImage;
+		_renderedImage = 0;
+#endif
 	}
 
 	void Engine::RenderBlock(Block* b) const
@@ -302,6 +313,9 @@ namespace raytracer
 			{
 				Color24 pixel = pixels[j * width + i];
 				uintpixels[j * width + i] = make(pixel.R * 255, pixel.G * 255, pixel.B * 255, 255);
+#if SAVE_TO_FILE
+				_renderedImage->SetPixel(i + block->GetX(), j + block->GetY(), pixel);
+#endif
 			}
 		}
 
@@ -319,7 +333,7 @@ namespace raytracer
 											0 //clrimportant
 		};
 		StretchDIBits(GetDC(_windowHandle),
-					  block->GetX(), _windowHeight - block->GetY() - 2 * height, width, height,
+					  block->GetX(), _windowHeight - block->GetY() - height, width, height,
 					  0, 0, width, height,
 					  uintpixels,
 					  &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);

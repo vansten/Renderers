@@ -58,9 +58,9 @@ namespace raytracer
 		float b = dx23 * (planeIntersectionPoint[1] - _vertex2Position[1]) - dy23 * (planeIntersectionPoint[0] - _vertex2Position[0]);
 		float c = dx31 * dyy3 - dy31 * dxx3;
 		if(
-			a > 0.0f &&
-			b > 0.0f &&
-			c > 0.0f
+			a >= 0.0f &&
+			b >= 0.0f &&
+			c >= 0.0f
 			)
 		{
 			return true;

@@ -18,8 +18,9 @@ namespace raytracer
 		r.Origin[1] = 0.0f;
 		r.Origin[2] = -10.0f;
 		r.Direction[0] = p.X * _tanFovDiv2;
-		r.Direction[1] = p.Y * _tanFovDiv2 * _onePerAspectRatio;
+		r.Direction[1] = p.Y * _tanFovDiv2 *_onePerAspectRatio;
 		r.Direction[2] = 1.0f;
+		r.Direction.Normalize();
 		//return Ray(0.0f, 0.0f, -10.0f, p.X * _tanFovDiv2 * _aspectRatio, p.Y * _tanFovDiv2, 1.0f);
 	}
 }

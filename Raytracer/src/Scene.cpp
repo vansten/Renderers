@@ -18,10 +18,12 @@ namespace raytracer
 
 	void Scene::Init()
 	{
-		Sphere* s = new Sphere(-3.0f, 0.0f, 0.0f, 0.8f, Color24::Blue);
+		Sphere* s = new Sphere(2.0f, 0.0f, 0.0f, 1.3f, Color24::Blue);
 		_shapes.push_back(s);
-		s = new Sphere(1.0f, 0.0f, 0.0f, 0.6f, Color24::Red);
+		s = new Sphere(-2.0f, 0.0f, 0.0f, 1.3f, Color24::Red);
 		_shapes.push_back(s);
+		//s = new Sphere(0.0f, 0.0f, 0.0f, 1.3f, Color24::Green);
+		//_shapes.push_back(s);
 
 		auto it = _shapes.begin();
 		auto end = _shapes.end();
@@ -30,7 +32,7 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f));
+		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(40.0f, 0.0f, 0.0f));
 		_meshes.push_back(m);
 
 		auto meshesIt = _meshes.begin();

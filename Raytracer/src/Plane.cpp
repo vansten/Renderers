@@ -66,7 +66,7 @@ namespace raytracer
 		//t = (d - NdotO)/(NdotD)
 		float NdotO = Vector3::Dot(r.Origin, _normal);
 		float t = (_d - NdotO) / (NdotD);
-		if(t < 0.0f)
+		if(t <= 0.0f)
 		{
 			return false;
 		}

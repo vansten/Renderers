@@ -46,7 +46,7 @@ namespace raytracer
 			{
 				pixel.X = -1.0f + (i + 0.5f) * pixelWidth;
 				pixel.Y = -1.0f + (j + 0.5f) * pixelHeight;
-				pixel.Z = -10.0f;
+				pixel.Z = 0.0f;
 #if DRAW_GRID
 				if((i + _x0) % 80 == 0 || (j + _y0) % 80 == 0)
 				{
