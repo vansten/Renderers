@@ -16,7 +16,8 @@ namespace raytracer
 
 	enum class MenuCommands
 	{
-		RENDER_IMAGE
+		RENDER_IMAGE,
+		SAVE_IMAGE
 	};
 
 	class Engine
@@ -33,6 +34,7 @@ namespace raytracer
 		Image* _renderedImage;
 		Camera* _camera;
 		HWND _windowHandle;
+		HMENU _menuHandle;
 		int _threadCount;
 		bool _bRunning;
 
@@ -50,10 +52,11 @@ namespace raytracer
 		void Render();
 		void RenderBlock(Block* b) const;
 		void RenderBlocks(const int start, const int howMany) const;
-		void SaveRenderedImage();
 
 		void RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels) const;
 		void PresentBlockWork(const Block* block) const;
+
+		void SaveImage() const;
 
 		static Engine* GetInstance();
 

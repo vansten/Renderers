@@ -1,7 +1,7 @@
 #pragma once
 
 #define ORTHO 1
-#define ORTHO_SIZE 1.0f
+#define ORTHO_SIZE 4.0f
 
 #define PC 0
 
@@ -11,10 +11,8 @@
 #endif
 
 #define ANTI_ALIASING 0
-#define MAX_STEPS 6
+#define MAX_STEPS 4
 
 #define USE_CONSOLE 1
 
 #define DRAW_GRID 0
-
-#define SAVE_TO_FILE 1
