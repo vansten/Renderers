@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#define LIGHTING_ON 0
+#define LIGHTING_ON 1
 #if LIGHTING_ON
 #define VERTEX_LIGHTING 0
 #if VERTEX_LIGHTING
@@ -167,7 +167,7 @@ void Rasterizer::DrawTriangleWithTexture(Buffer* buffer, DepthBuffer* depthBuffe
 					pixelNormal = objectToWorld.MultiplyByVector3(v1.Normal, 0.0f) * lambda1 + objectToWorld.MultiplyByVector3(v2.Normal, 0.0f) * lambda2 + objectToWorld.MultiplyByVector3(v3.Normal, 0.0f) * lambda3;
 					pixelNormal.Normalize();
 					pixelWorld = objectToWorld.MultiplyByVector3(v1.Position) * lambda1 + objectToWorld.MultiplyByVector3(v2.Position) * lambda2 + objectToWorld.MultiplyByVector3(v3.Position) * lambda3;
-					//Directiona ligthing
+					//Directional ligthing
 					float dot = clamp(Vector3::Dot(Vector3(pixelNormal[0], pixelNormal[1], pixelNormal[2]), directionInverted));
 					finalDirectionalColor = directionalLight->Color * dot;
 					//Spotlight lighting

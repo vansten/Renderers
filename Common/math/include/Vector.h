@@ -4,7 +4,7 @@
 
 #include "Types.h"
 
-#define USE_SIMD 0
+#define USE_SIMD 1
 
 const float PI = 3.14159265359f;
 const float TwoPI = 2.0f * PI;
