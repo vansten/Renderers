@@ -2,7 +2,7 @@
 
 #include "Ray.h"
 #include "RaycastHit.h"
-#include "../include/Types.h"
+#include "../include/Material.h"
 
 namespace raytracer
 {
@@ -10,17 +10,22 @@ namespace raytracer
 	{
 		friend class Ray;
 
-	public:
-		Color24 Color;
+	protected:
+		Material* _material;
 
 	public:
-		Shape(Color24 color = Color24::Magenta);
+		Shape(Material* material = nullptr);
 		Shape(const Shape& other);
 		virtual ~Shape();
 		virtual void Init();
 		virtual void Shutdown();
 		virtual std::string ToString() const;
-		virtual Color24 GetColor() const;
+
+		void SetMaterial(Material* material);
+		inline Material* GetMaterial() const
+		{
+			return _material;
+		}
 
 	protected:
 		virtual bool Intersects(const Ray& r, RaycastHit& hit) const;

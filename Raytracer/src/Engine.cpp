@@ -102,7 +102,7 @@ namespace raytracer
 		{
 			for(int j = 0; j < y; ++j)
 			{
-				_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, min(_windowWidth - usedWidth, widthPerBlock), min(_windowHeight - usedHeight, heightPerBlock), Color24::White * 0.3f));
+				_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, min(_windowWidth - usedWidth, widthPerBlock), min(_windowHeight - usedHeight, heightPerBlock), Color24::Black));
 				usedHeight += heightPerBlock;
 			}
 			usedWidth += widthPerBlock;
@@ -217,7 +217,7 @@ namespace raytracer
 			(*threadsIt).join();
 		}
 #else
-		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::White * 0.3f);
+		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::Black);
 
 		_scene->Render(_renderedImage);
 		RenderScreenPixels(0, _windowWidth, 0, _windowHeight, _renderedImage->GetPixels());

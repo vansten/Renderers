@@ -39,6 +39,7 @@ namespace raytracer
 		float pixelHeight = Engine::GetInstance()->GetPixelHeight();
 		Pixel pixel;
 		Ray r;
+		Color24 ambient = scene->GetAmbientColor();
 
 		for(int i = _x0; i < maxI; ++i)
 		{
@@ -56,10 +57,10 @@ namespace raytracer
 				{
 #endif
 #if ANTI_ALIASING
-					_renderedImage->SetPixel(i - _x0, j - _y0, CastRays(pixel, MAX_STEPS, pixelWidth, pixelHeight, shapesBegin, shapesEnd, camera));
+					_renderedImage->SetPixel(i - _x0, j - _y0, CastRays(pixel, MAX_STEPS, pixelWidth, pixelHeight, shapesBegin, shapesEnd, camera, ambient));
 #else
 					camera->ConstructRay(r, pixel);
-					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd));
+					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd, ambient));
 #endif
 #if DRAW_GRID
 				}
@@ -68,7 +69,7 @@ namespace raytracer
 		}
 	}
 
-	Color24 Block::CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd)
+	Color24 Block::CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, Color24 ambientLightColor)
 	{
 		RaycastHit hit;
 		Shape* closestShape = nullptr;
@@ -93,19 +94,23 @@ namespace raytracer
 
 		if(closestShape)
 		{
-			return closestShape->GetColor();
+			Material* mat = closestShape->GetMaterial();
+			if(mat != nullptr)
+			{
+				return mat->GetDiffuse() + ambientLightColor;
+			}
 		}
 
 		return _backgroundColor;
 	}
 
-	Color24 Block::CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera)
+	Color24 Block::CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera, Color24 ambientLightColor)
 	{
 		if(maxSteps == 0)
 		{
 			Ray r;
 			camera->ConstructRay(r, center);
-			return CastRay(r, shapesBegin, shapesEnd);
+			return CastRay(r, shapesBegin, shapesEnd, ambientLightColor);
 		}
 
 		float halfPixelW = 0.5f * pixelWidth;
@@ -129,7 +134,7 @@ namespace raytracer
 		for(int i = 0; i < 4; ++i)
 		{
 			camera->ConstructRay(rays[i], corners[i]);
-			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd);
+			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd, ambientLightColor);
 		}
 
 		Color24 diff(0, 0, 0);
@@ -158,7 +163,7 @@ namespace raytracer
 
 			for(int i = 0; i < 4; ++i)
 			{
-				colors[i] = CastRays(subCenters[i], maxSteps - 1, halfPixelW, halfPixelH, shapesBegin, shapesEnd, camera);
+				colors[i] = CastRays(subCenters[i], maxSteps - 1, halfPixelW, halfPixelH, shapesBegin, shapesEnd, camera, ambientLightColor);
 			}
 		}
 

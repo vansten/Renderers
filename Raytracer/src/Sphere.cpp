@@ -4,22 +4,20 @@
 
 namespace raytracer
 {
-	Sphere::Sphere(Color24 color) : Center(), Radius(0.0f), Shape(color)
+	Sphere::Sphere(Material* material) : Center(), Radius(0.0f), Shape(material)
 	{
 
 	}
 
-	Sphere::Sphere(Vector3 center, float radius, Color24 color) : Center(center), Radius(radius), Shape(color)
+	Sphere::Sphere(Vector3 center, float radius, Material* material) : Center(center), Radius(radius), Shape(material)
 	{
-		Color = color;
 	}
 
-	Sphere::Sphere(float x0, float y0, float z0, float radius, Color24 color) : Center(x0, y0, z0), Radius(radius), Shape(color)
+	Sphere::Sphere(float x0, float y0, float z0, float radius, Material* material) : Center(x0, y0, z0), Radius(radius), Shape(material)
 	{
-		Color = color;
 	}
 
-	Sphere::Sphere(const Sphere& other) : Center(other.Center), Radius(other.Radius), Shape(other.Color)
+	Sphere::Sphere(const Sphere& other) : Center(other.Center), Radius(other.Radius), Shape(other)
 	{
 
 	}
@@ -36,7 +34,6 @@ namespace raytracer
 
 	void Sphere::Shutdown()
 	{
-
 	}
 
 	std::string Sphere::ToString() const

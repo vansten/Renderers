@@ -14,7 +14,7 @@ namespace raytracer
 		Vector3 _normal;
 
 	public:
-		Triangle(Vector3 v1, Vector3 v2, Vector3 v3, Color24 color = Color24::Magenta);
+		Triangle(Vector3 v1, Vector3 v2, Vector3 v3, Material* material);
 		Triangle(const Triangle& other);
 		virtual ~Triangle();
 		virtual void Init() override;

@@ -118,6 +118,8 @@ public:
 	float B;
 
 	Color24(float r = 0.0f, float g = 0.0f, float b = 0.0f) : R(clamp(r)), G(clamp(g)), B(clamp(b)) {}
+	Color24(const Color24& other) : R(other.R), G(other.G), B(other.B) {}
+	Color24(const Color32& other) : R(other.R), G(other.G), B(other.B) {}
 
 	Color24 operator+(const Color24& c) const
 	{
@@ -155,6 +157,10 @@ public:
 
 	Color24 operator/(const float s) const
 	{
+		if(s == 0.0f)
+		{
+			return Color24();
+		}
 		return (*this) * (1.0f / s);
 	}
 
@@ -175,11 +181,6 @@ public:
 	void operator/=(const float s)
 	{
 		(*this) *= (1.0f / s);
-	}
-
-	operator uint32() const
-	{
-		return make(R * 255, G * 255, B * 255, 255);
 	}
 
 	friend Color24 operator*(const float s, const Color24& c);

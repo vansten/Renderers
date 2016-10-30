@@ -2,7 +2,7 @@
 
 namespace raytracer
 {
-	Triangle::Triangle(Vector3 v1, Vector3 v2, Vector3 v3, Color24 color) : _vertex1Position(v1), _vertex2Position(v2), _vertex3Position(v3), Shape(color)
+	Triangle::Triangle(Vector3 v1, Vector3 v2, Vector3 v3, Material* material) : _vertex1Position(v1), _vertex2Position(v2), _vertex3Position(v3), Shape(material)
 	{
 	}
 
@@ -19,7 +19,7 @@ namespace raytracer
 		Shape::Init();
 		_normal = Vector3::Cross(_vertex2Position - _vertex1Position, _vertex3Position - _vertex1Position);
 		_normal.Normalize();
-		_plane = new Plane(_vertex1Position, _normal);
+		_plane = new Plane(_vertex1Position, _normal, 0);
 	}
 
 	void Triangle::Shutdown()
@@ -38,6 +38,13 @@ namespace raytracer
 	
 	bool Triangle::Intersects(const Ray& r, RaycastHit& hit) const
 	{
+		float NdotD = Vector3::Dot(_normal, r.Direction);
+		if(NdotD >= 0.0f)
+		{
+			//Ignore backfaces
+			return false;
+		}
+
 		if(!r.Intersects(*_plane, hit))
 		{
 			return false;

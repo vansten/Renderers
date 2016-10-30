@@ -10,9 +10,9 @@ namespace raytracer
 		float Radius;
 
 	public:
-		Sphere(Color24 color = Color24::Magenta);
-		Sphere(Vector3 center, float radius, Color24 color = Color24::Magenta);
-		Sphere(float x0, float y0, float z0, float radius, Color24 color = Color24::Magenta);
+		Sphere(Material* material);
+		Sphere(Vector3 center, float radius, Material* material);
+		Sphere(float x0, float y0, float z0, float radius, Material* material);
 		Sphere(const Sphere& other);
 		virtual ~Sphere();
 

@@ -2,20 +2,19 @@
 
 namespace raytracer
 {
-	Plane::Plane(Color24 color) : _planePoint(0, 0, 0), _normal(0, 1, 0), _d(0), Shape(color)
+	Plane::Plane(Material* material) : _planePoint(0, 0, 0), _normal(0, 1, 0), _d(0), Shape(material)
 	{}
 
-	Plane::Plane(float x0, float y0, float z0, float nx, float ny, float nz, Color24 color) : _planePoint(x0, y0, z0), _normal(nx, ny, nz), _d(0), Shape(color)
+	Plane::Plane(float x0, float y0, float z0, float nx, float ny, float nz, Material* material) : _planePoint(x0, y0, z0), _normal(nx, ny, nz), _d(0), Shape(material)
 	{
-		Color = color;
 	}
 
-	Plane::Plane(Vector3 point, Vector3 normal, Color24 color) : _planePoint(point), _normal(normal), _d(0), Shape(color)
+	Plane::Plane(Vector3 point, Vector3 normal, Material* material) : _planePoint(point), _normal(normal), _d(0), Shape(material)
 	{
 
 	}
 
-	Plane::Plane(const Plane& other) : _planePoint(other._planePoint), _normal(other._normal), _d(other._d), Shape(other.Color)
+	Plane::Plane(const Plane& other) : _planePoint(other._planePoint), _normal(other._normal), _d(other._d), Shape(other)
 	{
 
 	}

@@ -14,6 +14,9 @@ namespace raytracer
 	protected:
 		std::vector<Shape*> _shapes;
 		std::vector<Mesh*> _meshes;
+		std::vector<Material*> _materials;
+
+		Color24 _ambientLightColor;
 
 	public:
 		Scene();
@@ -53,6 +56,11 @@ namespace raytracer
 		inline const std::vector<Mesh*> GetMeshes() const
 		{
 			return _meshes;
+		}
+
+		inline const Color24 GetAmbientColor() const
+		{
+			return _ambientLightColor;
 		}
 	};
 }

@@ -2,12 +2,12 @@
 
 namespace raytracer
 {
-	Shape::Shape(Color24 color) : Color(color)
+	Shape::Shape(Material* material) : _material(material)
 	{
 
 	}
 
-	Shape::Shape(const Shape& other) : Color(other.Color)
+	Shape::Shape(const Shape& other) : _material(other._material)
 	{
 
 	}
@@ -32,9 +32,9 @@ namespace raytracer
 		return "Shape";
 	}
 
-	Color24 Shape::GetColor() const
+	void Shape::SetMaterial(Material * material)
 	{
-		return Color;
+		_material = material;
 	}
 
 	bool Shape::Intersects(const Ray& r, RaycastHit& hit) const

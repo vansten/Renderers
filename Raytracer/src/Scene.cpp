@@ -18,9 +18,16 @@ namespace raytracer
 
 	void Scene::Init()
 	{
-		Sphere* s = new Sphere(2.0f, 0.0f, 0.0f, 1.3f, Color24::Blue);
+		Material* redMat = new Material(Color24::Red);
+		_materials.push_back(redMat);
+		Material* blueMat = new Material(Color24::Blue);
+		_materials.push_back(blueMat);
+		Material* magentaMat = new Material(Color24::Magenta);
+		_materials.push_back(magentaMat);
+
+		Sphere* s = new Sphere(2.0f, 0.0f, 0.0f, 1.3f, redMat);
 		_shapes.push_back(s);
-		s = new Sphere(-2.0f, 0.0f, 0.0f, 1.3f, Color24::Red);
+		s = new Sphere(-2.0f, 0.0f, 0.0f, 1.3f, blueMat);
 		_shapes.push_back(s);
 		//s = new Sphere(0.0f, 0.0f, 0.0f, 1.3f, Color24::Green);
 		//_shapes.push_back(s);
@@ -32,7 +39,7 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(40.0f, 0.0f, 0.0f));
+		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(40.0f, 0.0f, 0.0f), magentaMat);
 		_meshes.push_back(m);
 
 		auto meshesIt = _meshes.begin();
@@ -44,6 +51,8 @@ namespace raytracer
 				Console::WriteLine("Couldn't initialize mesh");
 			}
 		}
+
+		_ambientLightColor = Color24::White * 0.05f;
 	}
 
 	void Scene::Shutdown()
@@ -65,6 +74,15 @@ namespace raytracer
 			delete (*meshesIt);
 		}
 		_meshes.clear();
+
+		auto materialsIt = _materials.begin();
+		auto materialsEnd = _materials.end();
+		for(materialsIt; materialsIt != materialsEnd; ++materialsIt)
+		{
+			delete (*materialsIt);
+			(*materialsIt) = 0;
+		}
+		_materials.clear();
 	}
 
 	void Scene::Render(Image* _image) const
@@ -119,7 +137,11 @@ namespace raytracer
 
 				if(closestShape != nullptr)
 				{
-					_image->SetPixel(i, j, closestShape->GetColor());
+					Material* mat = closestShape->GetMaterial();
+					if(mat != nullptr)
+					{
+						_image->SetPixel(i, j, mat->GetDiffuse());
+					}
 				}
 			}
 		}

@@ -9,9 +9,10 @@ namespace raytracer
 	{
 	protected:
 		std::vector<Triangle*> _triangles;
+		Material* _material;
 
 	public:
-		Mesh(const char* filename, const Matrix& transform, Color24 color = Color24::Magenta);
+		Mesh(const char* filename, const Matrix& transform, Material* material);
 		~Mesh();
 
 		bool Init();

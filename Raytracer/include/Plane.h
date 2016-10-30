@@ -14,9 +14,9 @@ namespace raytracer
 
 	public:
 
-		Plane(Color24 color = Color24::Magenta);
-		Plane(float x0, float y0, float z0, float nx, float ny, float nz, Color24 color = Color24::Magenta);
-		Plane(Vector3 point, Vector3 normal, Color24 color = Color24::Magenta);
+		Plane(Material* material);
+		Plane(float x0, float y0, float z0, float nx, float ny, float nz, Material* material);
+		Plane(Vector3 point, Vector3 normal, Material* material);
 		Plane(const Plane& other);
 		virtual ~Plane();
 
