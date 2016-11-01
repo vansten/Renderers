@@ -4,14 +4,11 @@
 
 namespace raytracer
 {
-	class DirectionalLight : public Light
+	class AmbientLight : public Light
 	{
-	protected:
-		Vector3 _direction;
-
 	public:
-		DirectionalLight(Vector3 direction, Color24 color);
-		DirectionalLight(const DirectionalLight& other);
+		AmbientLight(Color24 color);
+		AmbientLight(const AmbientLight& other);
 
 		virtual Color24 Affect(Shape* shape, const IntersectionPoint& intersection, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const override;
 	};

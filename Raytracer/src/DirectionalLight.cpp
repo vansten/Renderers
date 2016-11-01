@@ -2,9 +2,13 @@
 
 namespace raytracer
 {
-	DirectionalLight::DirectionalLight(Vector3 position, Vector3 direction, Color24 color) : _direction(direction), _color(color)
+	DirectionalLight::DirectionalLight(Vector3 direction, Color24 color) : _direction(direction), Light(Vector3::Zero, color)
 	{
-		Position = position;
+		_direction.Normalize();
+	}
+
+	DirectionalLight::DirectionalLight(const DirectionalLight& other) : Light(other), _direction(other._direction)
+	{
 		_direction.Normalize();
 	}
 

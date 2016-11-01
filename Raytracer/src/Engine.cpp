@@ -83,7 +83,8 @@ namespace raytracer
 		_threadCount = 1;
 #endif
 
-		int blockCount = 16;
+		int blockRows = 4;
+		int blockCount = blockRows * blockRows;
 		blockCount = max(_threadCount, blockCount);
 		if(blockCount % 2 != 0)
 		{
@@ -91,18 +92,16 @@ namespace raytracer
 			return false;
 		}
 
-		int x = sqrt(blockCount);
-		int y = x;
-		int widthPerBlock = _windowWidth / x;
-		int heightPerBlock = _windowHeight / y;
+		int widthPerBlock = _windowWidth / blockRows;
+		int heightPerBlock = _windowHeight / blockRows;
 		int usedWidth = 0;
 		int usedHeight = 0;
 
-		for(int i = 0; i < x; ++i)
+		for(int i = 0; i < blockRows; ++i)
 		{
-			for(int j = 0; j < y; ++j)
+			for(int j = 0; j < blockRows; ++j)
 			{
-				_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, min(_windowWidth - usedWidth, widthPerBlock), min(_windowHeight - usedHeight, heightPerBlock), Color24::Black));
+				_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, min(_windowWidth - usedWidth, widthPerBlock), min(_windowHeight - usedHeight, heightPerBlock), Color24::White * 0.1f));
 				usedHeight += heightPerBlock;
 			}
 			usedWidth += widthPerBlock;

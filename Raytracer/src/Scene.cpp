@@ -8,7 +8,7 @@
 
 #include "../include/Defines.h"
 
-#include "../include/DirectionalLight.h"
+#include "../include/LightsInclude.h"
 
 namespace raytracer
 {
@@ -54,7 +54,8 @@ namespace raytracer
 			}
 		}
 
-		_lights.push_back(new DirectionalLight(Vector3(0, 0, -10), Vector3(0.5f, 0.1f, 1), Color24::White));
+		_lights.push_back(new AmbientLight(Color24::White * 0.05f));
+		_lights.push_back(new DirectionalLight(Vector3(0.5f, 0.1f, 1), Color24::White));
 	}
 
 	void Scene::Shutdown()
