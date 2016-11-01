@@ -69,8 +69,8 @@ namespace raytracer
 		{
 			return false;
 		}
-
-		hit.AddIntersectionPoint(r.Origin + r.Direction * t);
+		
+		hit.AddIntersectionPoint(IntersectionPoint(r.Origin + r.Direction * t, _normal));
 
 		return true;
 	}

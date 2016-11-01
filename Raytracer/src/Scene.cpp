@@ -8,6 +8,8 @@
 
 #include "../include/Defines.h"
 
+#include "../include/DirectionalLight.h"
+
 namespace raytracer
 {
 	Scene::Scene()
@@ -31,7 +33,7 @@ namespace raytracer
 		_shapes.push_back(s);
 		//s = new Sphere(0.0f, 0.0f, 0.0f, 1.3f, Color24::Green);
 		//_shapes.push_back(s);
-
+		
 		auto it = _shapes.begin();
 		auto end = _shapes.end();
 		for(it; it != end; ++it)
@@ -52,7 +54,7 @@ namespace raytracer
 			}
 		}
 
-		_ambientLightColor = Color24::White * 0.05f;
+		_lights.push_back(new DirectionalLight(Vector3(0, 0, -10), Vector3(0.5f, 0.1f, 1), Color24::White));
 	}
 
 	void Scene::Shutdown()
@@ -83,6 +85,15 @@ namespace raytracer
 			(*materialsIt) = 0;
 		}
 		_materials.clear();
+
+		auto lightsIt = _lights.begin();
+		auto lightsEnd = _lights.end();
+		for(lightsIt; lightsIt != lightsEnd; ++lightsIt)
+		{
+			delete (*lightsIt);
+			(*lightsIt) = 0;
+		}
+		_lights.clear();
 	}
 
 	void Scene::Render(Image* _image) const
@@ -125,7 +136,7 @@ namespace raytracer
 						int hitPointsSize = hitPoints.size();
 						for(int k = 0; k < hitPointsSize; ++k)
 						{
-							float distSq = (hitPoints[k] - r.Origin).LengthSquared();
+							float distSq = (hitPoints[k].Point - r.Origin).LengthSquared();
 							if(distSq < closestSq)
 							{
 								closestSq = distSq;

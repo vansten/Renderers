@@ -7,6 +7,8 @@
 
 #include "Image.h"
 
+#include "Light.h"
+
 namespace raytracer
 {
 	class Scene
@@ -15,8 +17,7 @@ namespace raytracer
 		std::vector<Shape*> _shapes;
 		std::vector<Mesh*> _meshes;
 		std::vector<Material*> _materials;
-
-		Color24 _ambientLightColor;
+		std::vector<Light*> _lights;
 
 	public:
 		Scene();
@@ -58,9 +59,9 @@ namespace raytracer
 			return _meshes;
 		}
 
-		inline const Color24 GetAmbientColor() const
+		inline const std::vector<Light*> GetLights() const
 		{
-			return _ambientLightColor;
+			return _lights;
 		}
 	};
 }

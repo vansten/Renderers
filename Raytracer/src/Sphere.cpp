@@ -50,6 +50,8 @@ namespace raytracer
 		float det = (b*b) - (4 * a * c);
 		if(det >= 0.0f)
 		{
+			Vector3 point;
+			Vector3 normal;
 			det = sqrt(det);
 			float doubleA = 2 * a;
 			float t1 = (-b - det) / doubleA;
@@ -58,13 +60,19 @@ namespace raytracer
 			//If t1 > 0 then we have intersaction point
 			if(t1 > 0.0f)
 			{
-				hit.AddIntersectionPoint(r.Origin + r.Direction * t1);
+				point = r.Origin + r.Direction * t1;
+				normal = point - Center;
+				normal.Normalize();
+				hit.AddIntersectionPoint(IntersectionPoint(point, normal));
 			}
 
 			//If t2 > 0 we MAY have intersection point. Just check if t2 isn't equal to t1 to make sure that intersection point isn't doubled
 			if(t2 > 0.0f && fabs(t1 - t2) > 0.000001f)
 			{
-				hit.AddIntersectionPoint(r.Origin + r.Direction * t2);
+				point = r.Origin + r.Direction * t1;
+				normal = point - Center;
+				normal.Normalize();
+				hit.AddIntersectionPoint(IntersectionPoint(point, normal));
 			}
 
 			return true;

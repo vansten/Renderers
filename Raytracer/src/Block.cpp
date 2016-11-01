@@ -31,6 +31,9 @@ namespace raytracer
 		auto shapes = scene->GetShapes();
 		auto shapesBegin = shapes.begin();
 		auto shapesEnd = shapes.end();
+		auto lights = scene->GetLights();
+		auto lightsBegin = lights.begin();
+		auto lightsEnd = lights.end();
 		float halfWidth = Engine::GetInstance()->GetWidth() * 0.5f;
 		float halfHeight = Engine::GetInstance()->GetHeight() * 0.5f;
 		int maxI = _x0 + _width;
@@ -39,7 +42,6 @@ namespace raytracer
 		float pixelHeight = Engine::GetInstance()->GetPixelHeight();
 		Pixel pixel;
 		Ray r;
-		Color24 ambient = scene->GetAmbientColor();
 
 		for(int i = _x0; i < maxI; ++i)
 		{
@@ -48,32 +50,22 @@ namespace raytracer
 				pixel.X = -1.0f + (i + 0.5f) * pixelWidth;
 				pixel.Y = -1.0f + (j + 0.5f) * pixelHeight;
 				pixel.Z = 0.0f;
-#if DRAW_GRID
-				if((i + _x0) % 80 == 0 || (j + _y0) % 80 == 0)
-				{
-					_renderedImage->SetPixel(i - _x0, j - _y0, Color24::Yellow);
-				}
-				else
-				{
-#endif
 #if ANTI_ALIASING
-					_renderedImage->SetPixel(i - _x0, j - _y0, CastRays(pixel, MAX_STEPS, pixelWidth, pixelHeight, shapesBegin, shapesEnd, camera, ambient));
+					_renderedImage->SetPixel(i - _x0, j - _y0, CastRays(pixel, MAX_STEPS, pixelWidth, pixelHeight, shapesBegin, shapesEnd, camera, lightsBegin, lightsEnd));
 #else
 					camera->ConstructRay(r, pixel);
-					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd, ambient));
-#endif
-#if DRAW_GRID
-				}
+					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd, lightsBegin, lightsEnd));
 #endif
 			}
 		}
 	}
 
-	Color24 Block::CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, Color24 ambientLightColor)
+	Color24 Block::CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd)
 	{
 		RaycastHit hit;
 		Shape* closestShape = nullptr;
 		float closestSq = FLT_MAX;
+		IntersectionPoint closestIP;
 		for(auto shapesIt = shapesBegin; shapesIt != shapesEnd; ++shapesIt)
 		{
 			if(r.Intersects(*(*shapesIt), hit))
@@ -82,35 +74,48 @@ namespace raytracer
 				int hitPointsSize = hitPoints.size();
 				for(int k = 0; k < hitPointsSize; ++k)
 				{
-					float distSq = (hitPoints[k] - r.Origin).LengthSquared();
+					float distSq = (hitPoints[k].Point - r.Origin).LengthSquared();
 					if(distSq < closestSq)
 					{
 						closestSq = distSq;
 						closestShape = (*shapesIt);
+						closestIP = hitPoints[k];
 					}
 				}
 			}
 		}
 
+#if LIGHTS
 		if(closestShape)
 		{
-			Material* mat = closestShape->GetMaterial();
-			if(mat != nullptr)
+			Color24 color = Color24::Black;
+			RaycastHit secondHit;
+			Ray ray;
+			ray.Origin = closestIP.Point;
+			for(auto lightsIt = lightsBegin; lightsIt != lightsEnd; ++lightsIt)
 			{
-				return mat->GetDiffuse() + ambientLightColor;
+				color += (*lightsIt)->Affect(closestShape, closestIP, shapesBegin, shapesEnd);
 			}
+
+			return color;
 		}
+#else
+		if(closestShape)
+		{
+			return closestShape->GetMaterial()->GetDiffuse();
+		}
+#endif
 
 		return _backgroundColor;
 	}
 
-	Color24 Block::CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera, Color24 ambientLightColor)
+	Color24 Block::CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd)
 	{
 		if(maxSteps == 0)
 		{
 			Ray r;
 			camera->ConstructRay(r, center);
-			return CastRay(r, shapesBegin, shapesEnd, ambientLightColor);
+			return CastRay(r, shapesBegin, shapesEnd, lightsBegin, lightsEnd);
 		}
 
 		float halfPixelW = 0.5f * pixelWidth;
@@ -134,7 +139,7 @@ namespace raytracer
 		for(int i = 0; i < 4; ++i)
 		{
 			camera->ConstructRay(rays[i], corners[i]);
-			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd, ambientLightColor);
+			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd, lightsBegin, lightsEnd);
 		}
 
 		Color24 diff(0, 0, 0);
@@ -163,7 +168,7 @@ namespace raytracer
 
 			for(int i = 0; i < 4; ++i)
 			{
-				colors[i] = CastRays(subCenters[i], maxSteps - 1, halfPixelW, halfPixelH, shapesBegin, shapesEnd, camera, ambientLightColor);
+				colors[i] = CastRays(subCenters[i], maxSteps - 1, halfPixelW, halfPixelH, shapesBegin, shapesEnd, camera, lightsBegin, lightsEnd);
 			}
 		}
 

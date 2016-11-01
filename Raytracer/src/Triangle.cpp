@@ -50,7 +50,7 @@ namespace raytracer
 			return false;
 		}
 
-		Vector3 planeIntersectionPoint = hit.GetIntersectionPoints()[0];
+		Vector3 planeIntersectionPoint = hit.GetIntersectionPoints()[0].Point;
 
 		float dxx3 = planeIntersectionPoint[0] - _vertex3Position[0];
 		float dyy3 = planeIntersectionPoint[1] - _vertex3Position[1];

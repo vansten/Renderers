@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="src\Block.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -146,8 +147,10 @@
     <ClInclude Include="include\Block.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Defines.h" />
+    <ClInclude Include="include\DirectionalLight.h" />
     <ClInclude Include="include\Engine.h" />
     <ClInclude Include="include\Image.h" />
+    <ClInclude Include="include\Light.h" />
     <ClInclude Include="include\Material.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\OrthoCamera.h" />

@@ -2,6 +2,11 @@
 
 namespace raytracer
 {
+	IntersectionPoint::IntersectionPoint(Vector3 point, Vector3 normal) : Point(point), Normal(normal)
+	{
+
+	}
+
 	RaycastHit::RaycastHit()
 	{
 		_intersectionPoints.reserve(2);
@@ -12,12 +17,12 @@ namespace raytracer
 		_intersectionPoints.clear();
 	}
 
-	void RaycastHit::AddIntersectionPoint(const Vector3& p)
+	void RaycastHit::AddIntersectionPoint(const IntersectionPoint& p)
 	{
 		_intersectionPoints.push_back(p);
 	}
 
-	const std::vector<Vector3>& RaycastHit::GetIntersectionPoints()
+	const std::vector<IntersectionPoint>& RaycastHit::GetIntersectionPoints()
 	{
 		return _intersectionPoints;
 	}
