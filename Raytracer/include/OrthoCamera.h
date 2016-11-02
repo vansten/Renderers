@@ -8,10 +8,9 @@ namespace raytracer
 	{
 	protected:
 		float _size;
-		float _cameraZ;
 
 	public:
-		OrthoCamera(float size, float cameraZ);
+		OrthoCamera(float size, Vector3 position = Vector3::Zero);
 		OrthoCamera(const OrthoCamera& other);
 
 		virtual void ConstructRay(Ray& r, const Pixel& p) const override;

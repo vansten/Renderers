@@ -1,4 +1,5 @@
 #include "../include/Triangle.h"
+#include "../include/Mesh.h"
 
 namespace raytracer
 {
@@ -52,8 +53,6 @@ namespace raytracer
 
 		Vector3 planeIntersectionPoint = hit.GetIntersectionPoints()[0].Point;
 
-		float dxx3 = planeIntersectionPoint[0] - _vertex3Position[0];
-		float dyy3 = planeIntersectionPoint[1] - _vertex3Position[1];
 		float dx12 = _vertex1Position[0] - _vertex2Position[0];
 		float dx23 = _vertex2Position[0] - _vertex3Position[0];
 		float dx31 = _vertex3Position[0] - _vertex1Position[0];
@@ -63,7 +62,7 @@ namespace raytracer
 
 		float a = dx12 * (planeIntersectionPoint[1] - _vertex1Position[1]) - dy12 * (planeIntersectionPoint[0] - _vertex1Position[0]);
 		float b = dx23 * (planeIntersectionPoint[1] - _vertex2Position[1]) - dy23 * (planeIntersectionPoint[0] - _vertex2Position[0]);
-		float c = dx31 * dyy3 - dy31 * dxx3;
+		float c = dx31 * (planeIntersectionPoint[1] - _vertex3Position[1]) - dy31 * (planeIntersectionPoint[0] - _vertex3Position[0]);
 		if(
 			a >= 0.0f &&
 			b >= 0.0f &&

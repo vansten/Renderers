@@ -20,7 +20,7 @@ namespace raytracer
 		virtual void Init() override;
 		virtual void Shutdown() override;
 		virtual std::string ToString() const override;
-
+		
 	protected:
 		virtual bool Intersects(const Ray& r, RaycastHit& hit) const override;
 	};

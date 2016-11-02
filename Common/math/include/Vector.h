@@ -53,6 +53,14 @@ public:
 		_components[N - 1] = f;
 	}
 
+	Vector(const Vector<N + 1>& v) : _simdValue()
+	{
+		for(int i = 0; i < N; ++i)
+		{
+			_components[i] = v[i];
+		}
+	}
+
 	Vector(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : _simdValue()
 	{
 		float c[] = {x, y, z, w};

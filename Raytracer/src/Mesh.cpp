@@ -4,7 +4,7 @@
 
 namespace raytracer
 {
-	Mesh::Mesh(const char* filename, const Matrix& transform, Material* material)
+	Mesh::Mesh(const char* filename, const Matrix& transform, Material* material) : _transform(transform)
 	{
 		std::vector<Vector3> positions;
 		std::vector<Vector3> normals;
@@ -17,10 +17,10 @@ namespace raytracer
 		for(int i = 0; i < size; ++i)
 		{
 			Face f = faces[i];
-			Vector4 transformedPos0 = transform.MultiplyByVector3(positions[f.VertexPositions[0]], 1);
-			Vector4 transformedPos1 = transform.MultiplyByVector3(positions[f.VertexPositions[1]], 1);
-			Vector4 transformedPos2 = transform.MultiplyByVector3(positions[f.VertexPositions[2]], 1);
-			_triangles.push_back(new Triangle(Vector3(transformedPos0[0], transformedPos0[1], transformedPos0[2]), Vector3(transformedPos1[0], transformedPos1[1], transformedPos1[2]), Vector3(transformedPos2[0], transformedPos2[1], transformedPos2[2]), material));
+			Vector3 transformedPos0 = transform.MultiplyByVector3(positions[f.VertexPositions[0]], 1);
+			Vector3 transformedPos1 = transform.MultiplyByVector3(positions[f.VertexPositions[1]], 1);
+			Vector3 transformedPos2 = transform.MultiplyByVector3(positions[f.VertexPositions[2]], 1);
+			_triangles.push_back(new Triangle(transformedPos0, transformedPos1, transformedPos2, material));
 		}
 	}
 

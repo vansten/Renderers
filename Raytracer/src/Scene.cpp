@@ -41,7 +41,7 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(40.0f, 0.0f, 0.0f), magentaMat);
+		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 30.0f), magentaMat);
 		_meshes.push_back(m);
 
 		auto meshesIt = _meshes.begin();
