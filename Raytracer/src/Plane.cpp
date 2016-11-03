@@ -55,8 +55,8 @@ namespace raytracer
 
 	bool Plane::Intersects(const Ray& r, RaycastHit& hit) const
 	{
-		float NdotD = Vector3::Dot(_normal, -r.Direction);
-		if(NdotD == 0.0f)
+		float NdotD = Vector3::Dot(_normal, r.Direction);
+		if(NdotD >= 0.0f)
 		{
 			//Ray's direction is perpendicular to plane's normal so there is no intersection for sure
 			return false;
@@ -66,8 +66,7 @@ namespace raytracer
 		//float NdotO = Vector3::Dot(r.Origin, _normal);
 		//float t = (_d - NdotO) / (NdotD);
 
-		//t = -(NdotO + d) / NdotD
-		float NdotO = Vector3::Dot(_planePoint - r.Origin, _normal);
+		float NdotO = Vector3::Dot(r.Origin - _planePoint, _normal);
 		float t = -(NdotO) / (NdotD);
 
 		if(t <= 0.0f)

@@ -15,7 +15,6 @@ namespace raytracer
 	void PerspectiveCamera::ConstructRay(Ray& r, const Pixel& p) const
 	{
 		r.Origin = _position;
-		//r.Origin = Vector3::Zero;
 		r.Direction[0] = p.X * _tanFovDiv2;
 		r.Direction[1] = p.Y * _tanFovDiv2 *_onePerAspectRatio;
 		r.Direction[2] = 1.0f;

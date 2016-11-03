@@ -137,6 +137,7 @@
     <ClCompile Include="src\OrthoCamera.cpp" />
     <ClCompile Include="src\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Plane.cpp" />
+    <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\RaycastHit.cpp" />
     <ClCompile Include="src\Scene.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="include\PerspectiveCamera.h" />
     <ClInclude Include="include\Pixel.h" />
     <ClInclude Include="include\Plane.h" />
+    <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\Ray.h" />
     <ClInclude Include="include\RaycastHit.h" />
     <ClInclude Include="include\Scene.h" />

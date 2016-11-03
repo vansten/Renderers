@@ -26,14 +26,17 @@ namespace raytracer
 		_materials.push_back(blueMat);
 		Material* magentaMat = new Material(Color24::Magenta);
 		_materials.push_back(magentaMat);
+		Material* greenMat = new Material(Color24::Green);
+		_materials.push_back(greenMat);
 
-		Sphere* s = new Sphere(2.0f, 0.0f, 0.0f, 1.3f, redMat);
+		Sphere* s = new Sphere(2.5f, 0.0f, 0.0f, 1.3f, redMat);
 		_shapes.push_back(s);
-		s = new Sphere(-2.0f, 0.0f, 0.0f, 1.3f, blueMat);
+		s = new Sphere(-2.5f, 0.0f, -5.0f, 0.5f, greenMat);
 		_shapes.push_back(s);
-		//s = new Sphere(0.0f, 0.0f, 0.0f, 1.3f, Color24::Green);
-		//_shapes.push_back(s);
-		
+
+		Plane* p = new Plane(Vector3(0, 0, 5), Vector3(0, 0, -1), blueMat);
+		_shapes.push_back(p);
+
 		auto it = _shapes.begin();
 		auto end = _shapes.end();
 		for(it; it != end; ++it)
@@ -41,7 +44,7 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 30.0f), magentaMat);
+		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f), magentaMat);
 		_meshes.push_back(m);
 
 		auto meshesIt = _meshes.begin();
@@ -56,6 +59,7 @@ namespace raytracer
 
 		_lights.push_back(new AmbientLight(Color24::White * 0.05f));
 		_lights.push_back(new DirectionalLight(Vector3(0.5f, 0.1f, 1), Color24::White));
+		//_lights.push_back(new PointLight(Vector3(0, 2, -5.0f), Color24::White, 1.0f, 0.25f));
 	}
 
 	void Scene::Shutdown()

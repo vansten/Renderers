@@ -51,27 +51,23 @@ namespace raytracer
 			return false;
 		}
 
-		Vector3 planeIntersectionPoint = hit.GetIntersectionPoints()[0].Point;
+		Vector3 v1v2 = _vertex2Position - _vertex1Position;
+		Vector3 v1v3 = _vertex3Position - _vertex1Position;
+		Vector3 pVec = Vector3::Cross(r.Direction, v1v3);
+		float det = Vector3::Dot(v1v2, pVec);
 
-		float dx12 = _vertex1Position[0] - _vertex2Position[0];
-		float dx23 = _vertex2Position[0] - _vertex3Position[0];
-		float dx31 = _vertex3Position[0] - _vertex1Position[0];
-		float dy12 = _vertex1Position[1] - _vertex2Position[1];
-		float dy23 = _vertex2Position[1] - _vertex3Position[1];
-		float dy31 = _vertex3Position[1] - _vertex1Position[1];
+		if(fabs(det) < 0.000001f) return false;
 
-		float a = dx12 * (planeIntersectionPoint[1] - _vertex1Position[1]) - dy12 * (planeIntersectionPoint[0] - _vertex1Position[0]);
-		float b = dx23 * (planeIntersectionPoint[1] - _vertex2Position[1]) - dy23 * (planeIntersectionPoint[0] - _vertex2Position[0]);
-		float c = dx31 * (planeIntersectionPoint[1] - _vertex3Position[1]) - dy31 * (planeIntersectionPoint[0] - _vertex3Position[0]);
-		if(
-			a >= 0.0f &&
-			b >= 0.0f &&
-			c >= 0.0f
-			)
-		{
-			return true;
-		}
+		float invDet = 1.0f / det;
 
-		return false;
+		Vector3 tVec = r.Origin - _vertex1Position;
+		float u = Vector3::Dot(tVec, pVec) * invDet;
+		if(u < 0 || u > 1) return false;
+
+		Vector3 qVec = Vector3::Cross(tVec, v1v2);
+		float v = Vector3::Dot(r.Direction, qVec) * invDet;
+		if(v < 0 || (u + v) > 1) return false;
+
+		return true;
 	}
 }

@@ -15,4 +15,4 @@
 
 #define USE_CONSOLE 1
 
-#define LIGHTS 0
+#define LIGHTS 1
