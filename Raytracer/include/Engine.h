@@ -80,6 +80,11 @@ namespace raytracer
 			return _pixelHeight;
 		}
 
+		inline const Camera* GetCamera() const
+		{
+			return _camera;
+		}
+
 	protected:
 		bool SetupScene();
 	};

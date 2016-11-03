@@ -12,7 +12,7 @@ namespace raytracer
 
 	}
 
-	Color24 AmbientLight::Affect(Shape* shape, const IntersectionPoint& intersection, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const
+	Color24 AmbientLight::Affect(Shape* shape, const IntersectionPoint& intersection, const Camera* camera, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const
 	{
 		return _color;
 	}

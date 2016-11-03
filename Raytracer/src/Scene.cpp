@@ -20,21 +20,21 @@ namespace raytracer
 
 	void Scene::Init()
 	{
-		Material* redMat = new Material(Color24::Red);
+		Material* redMat = new Material(Color24::Red, Color24::Blue, 128.0f);
 		_materials.push_back(redMat);
-		Material* blueMat = new Material(Color24::Blue);
+		Material* blueMat = new Material(Color24::Blue, Color24::Green, 128.0f);
 		_materials.push_back(blueMat);
-		Material* magentaMat = new Material(Color24::Magenta);
+		Material* magentaMat = new Material(Color24::Magenta, Color24::Yellow, 128.0f);
 		_materials.push_back(magentaMat);
-		Material* greenMat = new Material(Color24::Green);
+		Material* greenMat = new Material(Color24::Green, Color24::Red, 128.0f);
 		_materials.push_back(greenMat);
 
-		Sphere* s = new Sphere(2.5f, 0.0f, 0.0f, 1.3f, redMat);
+		Sphere* s = new Sphere(0.0f, 0.0f, -2.0f, 1.3f, redMat);
 		_shapes.push_back(s);
-		s = new Sphere(-2.5f, 0.0f, -5.0f, 0.5f, greenMat);
+		s = new Sphere(-2.5f, 0.0f, -2.0f, 0.5f, greenMat);
 		_shapes.push_back(s);
-
-		Plane* p = new Plane(Vector3(0, 0, 5), Vector3(0, 0, -1), blueMat);
+		
+		Plane* p = new Plane(Vector3(0, 0, 1), Vector3(0, 0, -1), blueMat);
 		_shapes.push_back(p);
 
 		auto it = _shapes.begin();
@@ -58,8 +58,8 @@ namespace raytracer
 		}
 
 		_lights.push_back(new AmbientLight(Color24::White * 0.05f));
-		_lights.push_back(new DirectionalLight(Vector3(0.5f, 0.1f, 1), Color24::White));
-		//_lights.push_back(new PointLight(Vector3(0, 2, -5.0f), Color24::White, 1.0f, 0.25f));
+		_lights.push_back(new DirectionalLight(Vector3(0.0f, 0.0f, 1.0f), Color24::White * 0.3f));
+		_lights.push_back(new PointLight(Vector3(0, 0, -5.0f), Color24::White, 1.0f, 0.25f));
 	}
 
 	void Scene::Shutdown()

@@ -94,7 +94,7 @@ namespace raytracer
 			ray.Origin = closestIP.Point;
 			for(auto lightsIt = lightsBegin; lightsIt != lightsEnd; ++lightsIt)
 			{
-				color += (*lightsIt)->Affect(closestShape, closestIP, shapesBegin, shapesEnd);
+				color += (*lightsIt)->Affect(closestShape, closestIP, Engine::GetInstance()->GetCamera(), shapesBegin, shapesEnd);
 			}
 
 			return color;

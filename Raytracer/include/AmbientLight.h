@@ -10,6 +10,6 @@ namespace raytracer
 		AmbientLight(Color24 color);
 		AmbientLight(const AmbientLight& other);
 
-		virtual Color24 Affect(Shape* shape, const IntersectionPoint& intersection, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const override;
+		virtual Color24 Affect(Shape* shape, const IntersectionPoint& intersection, const Camera* camera, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const override;
 	};
 }

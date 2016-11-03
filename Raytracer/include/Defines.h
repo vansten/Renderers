@@ -10,7 +10,7 @@
 #define MULTITHREADED 1
 #endif
 
-#define ANTI_ALIASING 0
+#define ANTI_ALIASING 1
 #define MAX_STEPS 4
 
 #define USE_CONSOLE 1

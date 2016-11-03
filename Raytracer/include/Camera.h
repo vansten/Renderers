@@ -17,6 +17,11 @@ namespace raytracer
 		Camera(const Camera& other);
 		virtual ~Camera();
 
+		virtual inline Vector3 GetPosition() const
+		{
+			return _position;
+		}
+
 		virtual void ConstructRay(Ray& r, const Pixel& p) const = 0;
 	};
 }

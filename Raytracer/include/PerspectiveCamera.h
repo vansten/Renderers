@@ -17,7 +17,7 @@ namespace raytracer
 	public:
 		PerspectiveCamera(float fov, float nearPlane, float farPlane, Vector3 position = Vector3::Zero, Matrix rotation = Matrix::Identity);
 		PerspectiveCamera(const PerspectiveCamera& other);
-
+		
 		virtual void ConstructRay(Ray& r, const Pixel& p) const override;
 	};
 }
