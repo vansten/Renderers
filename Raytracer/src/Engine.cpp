@@ -8,8 +8,10 @@
 #include "../include/Timer.h"
 #include "../include/Block.h"
 #include "../include/Defines.h"
+#include "../include/HilbertCurve.h"
 
 #include <thread>
+#include <mutex>
 
 #include <ShlObj.h>
 
@@ -83,7 +85,7 @@ namespace raytracer
 		_threadCount = 1;
 #endif
 
-		int blockRows = 4;
+		int blockRows = 32;
 		int blockCount = blockRows * blockRows;
 		blockCount = max(_threadCount, blockCount);
 		if(blockCount % 2 != 0)
@@ -97,6 +99,17 @@ namespace raytracer
 		int usedWidth = 0;
 		int usedHeight = 0;
 
+#if USE_HILBERT_CURVE
+
+		for(int i = 0; i < blockCount; ++i)
+		{
+			Vector2 xy = HilbertCurve::Evaluate(blockCount, i);
+			Block* b = new Block(xy[0] * widthPerBlock, xy[1] * heightPerBlock, widthPerBlock, heightPerBlock, Color24::Black);
+			_blocks.push_back(b);
+		}
+
+#else
+
 		for(int i = 0; i < blockRows; ++i)
 		{
 			for(int j = 0; j < blockRows; ++j)
@@ -107,6 +120,8 @@ namespace raytracer
 			usedWidth += widthPerBlock;
 			usedHeight = 0;
 		}
+
+#endif
 #endif
 
 #if ORTHO
@@ -198,16 +213,15 @@ namespace raytracer
 		t.Start();
 #if BLOCKS
 
+		_currentBlockIndex = 0;
 		int blocksPerThread = _blocks.size() / _threadCount;
 		std::vector<std::thread> threads;
-		int start = 0;
 		for(int i = 0; i < _threadCount - 1; ++i)
 		{
-			threads.push_back(std::thread(&Engine::RenderBlocks, this, start, blocksPerThread));
-			start += blocksPerThread;
+			threads.push_back(std::thread(&Engine::RenderBlocks, this, i, blocksPerThread));
 		}
 
-		RenderBlocks(start, blocksPerThread);
+		RenderBlocks(_threadCount - 1, blocksPerThread);
 
 		auto threadsIt = threads.begin();
 		auto threadsEnd = threads.end();
@@ -237,14 +251,41 @@ namespace raytracer
 		PresentBlockWork(b);
 	}
 
-	void Engine::RenderBlocks(const int start, const int howMany) const
+	void Engine::RenderBlocks(const int threadIndex, const int blocksPerThread)
 	{
-		int max = min(start + howMany, _blocks.size());
-		for(int i = start; i < max; ++i)
+#if USE_HILBERT_CURVE
+
+		int i;
+		while(GetNextBlockIndex(i))
 		{
 			RenderBlock(_blocks.at(i));
 		}
 
+#else
+
+		int max = min(threadIndex * blocksPerThread + blocksPerThread, _blocks.size());
+		for(int i = threadIndex * blocksPerThread; i < max; ++i)
+		{
+			RenderBlock(_blocks.at(i));
+		}
+
+#endif
+	}
+
+	bool Engine::GetNextBlockIndex(int& index)
+	{
+		static std::mutex mutex;
+		std::unique_lock<std::mutex> lock(mutex);
+		if(_currentBlockIndex < _blocks.size())
+		{
+			index = _currentBlockIndex;
+			_currentBlockIndex += 1;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	void Engine::RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels) const

@@ -36,6 +36,7 @@ namespace raytracer
 		HWND _windowHandle;
 		HMENU _menuHandle;
 		int _threadCount;
+		int _currentBlockIndex;
 		bool _bRunning;
 
 		static Engine* _instance;
@@ -51,7 +52,8 @@ namespace raytracer
 
 		void Render();
 		void RenderBlock(Block* b) const;
-		void RenderBlocks(const int start, const int howMany) const;
+		void RenderBlocks(const int threadIndex, const int blocksPerThread);
+		bool GetNextBlockIndex(int& index);
 
 		void RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels) const;
 		void PresentBlockWork(const Block* block) const;
