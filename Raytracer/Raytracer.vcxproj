@@ -132,6 +132,7 @@
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\HilbertCurve.cpp" />
     <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Mesh.cpp" />

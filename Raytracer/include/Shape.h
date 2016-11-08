@@ -22,7 +22,7 @@ namespace raytracer
 		virtual std::string ToString() const;
 
 		void SetMaterial(Material* material);
-		inline Material* GetMaterial() const
+		inline const Material* GetMaterial() const
 		{
 			return _material;
 		}

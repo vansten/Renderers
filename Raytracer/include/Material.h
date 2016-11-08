@@ -13,17 +13,17 @@ public:
 	Material(Color24 diffuse = Color24::White, Color24 specular = Color24::White, float shininess = 0.0f);
 	Material(const Material& other);
 	
-	inline Color24 GetDiffuse()
+	inline Color24 GetDiffuse() const
 	{
 		return _diffuse;
 	}
 
-	inline Color24 GetSpecular()
+	inline Color24 GetSpecular() const
 	{
 		return _specular;
 	}
 
-	inline float GetShininess()
+	inline float GetShininess() const
 	{
 		return _shininess;
 	}

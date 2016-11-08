@@ -12,42 +12,20 @@ namespace raytracer
 
 	}
 
-	Color24 PointLight::Affect(Shape* shape, const IntersectionPoint& intersection, const Camera* camera, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const
+	Color24 PointLight::Affect(const Shape* shape, const IntersectionPoint& intersection, const Camera* camera, const std::vector<Shape*>::iterator shapesBegin, const std::vector<Shape*>::iterator shapesEnd) const
 	{
 		Vector3 L = _position - intersection.Point;
-		float length = L.Length();
-		L.Normalize();
-		Ray r(intersection.Point, L);
-		RaycastHit hit;
-		bool intersects = false;
-		for(auto shapesIt = shapesBegin; shapesIt != shapesEnd; ++shapesIt)
-		{
-			if((*shapesIt) != shape)
-			{
-				if(r.Intersects(*(*shapesIt), hit))
-				{
-					intersects = true;
-					break;
-				}
-			}
-		}
-
-		if(intersects)
+		
+		if(IsObscured(shape, intersection.Point, L, shapesBegin, shapesEnd))
 		{
 			return Color24::Black;
 		}
 
-		//Diffuse calculations
-		float NdotL = clamp(Vector3::Dot(r.Direction, intersection.Normal));
+		float length = L.Length();
+		L.Normalize();
 		float att = 1.0f / (_attenuation + _attenuation * length);
-		Color24 diffuse = NdotL * att * _intensity * _color * shape->GetMaterial()->GetDiffuse();
-
-		//Specular calculations
-		Vector3 V = (camera->GetPosition() - intersection.Point).Normalized();
-		Vector3 H = (L + V).Normalized();
-		float NdotH = clamp(Vector3::Dot(intersection.Normal, H));
-		Color24 specular = att * pow(NdotH, shape->GetMaterial()->GetShininess()) * shape->GetMaterial()->GetSpecular();
-
-		return diffuse + specular;
+		const Material* material = shape->GetMaterial();
+		
+		return att * (CalculateDiffuse(intersection, material, L) * _intensity + CalculateSpecular(camera, intersection, material, L));
 	}
 }

@@ -13,6 +13,6 @@ namespace raytracer
 		DirectionalLight(Vector3 direction, Color24 color);
 		DirectionalLight(const DirectionalLight& other);
 
-		virtual Color24 Affect(Shape* shape, const IntersectionPoint& intersection, const Camera* camera, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const override;
+		virtual Color24 Affect(const Shape* shape, const IntersectionPoint& intersection, const Camera* camera, const std::vector<Shape*>::iterator shapesBegin, const std::vector<Shape*>::iterator shapesEnd) const override;
 	};
 }

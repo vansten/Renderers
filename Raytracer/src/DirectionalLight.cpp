@@ -12,37 +12,17 @@ namespace raytracer
 		_direction.Normalize();
 	}
 
-	Color24 DirectionalLight::Affect(Shape* shape, const IntersectionPoint& intersection, const Camera* camera, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd) const
+	Color24 DirectionalLight::Affect(const Shape* shape, const IntersectionPoint& intersection, const Camera* camera, const std::vector<Shape*>::iterator shapesBegin, const std::vector<Shape*>::iterator shapesEnd) const
 	{
-		Ray r(intersection.Point, -_direction);
-		RaycastHit hit;
-		bool intersects = false;
-		for(auto shapesIt = shapesBegin; shapesIt != shapesEnd; ++shapesIt)
-		{
-			if((*shapesIt) != shape)
-			{
-				if(r.Intersects(*(*shapesIt), hit))
-				{
-					intersects = true;
-					break;
-				}
-			}
-		}
-		if(intersects)
+		Vector3 L = -_direction;
+
+		if(IsObscured(shape, intersection.Point, L, shapesBegin, shapesEnd))
 		{
 			return Color24::Black;
 		}
 
-		//Diffuse calculations
-		float NdotL = fmax(Vector3::Dot(intersection.Normal, -_direction), 0.0f);
-		Color24 diffuse = NdotL * _color * shape->GetMaterial()->GetDiffuse();
+		const Material* material = shape->GetMaterial();
 
-		//Specular calculations
-		Vector3 V = (camera->GetPosition() - intersection.Point).Normalized();
-		Vector3 H = (_direction + V).Normalized();
-		float NdotH = clamp(-Vector3::Dot(intersection.Normal, H));
-		Color24 specular = pow(NdotH, shape->GetMaterial()->GetShininess()) * shape->GetMaterial()->GetSpecular();
-		
-		return diffuse + specular;
+		return CalculateDiffuse(intersection, material, L) + CalculateSpecular(camera, intersection, material, L);
 	}
 }
