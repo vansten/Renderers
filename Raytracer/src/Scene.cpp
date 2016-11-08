@@ -29,13 +29,13 @@ namespace raytracer
 		Material* greenMat = new Material(Color24::Green, Color24::White, 256.0f);
 		_materials.push_back(greenMat);
 
-		Sphere* s = new Sphere(0.0f, 0.0f, -2.0f, 1.3f, redMat);
-		_shapes.push_back(s);
-		s = new Sphere(-2.5f, 0.0f, -2.0f, 0.5f, greenMat);
-		_shapes.push_back(s);
-		
-		Plane* p = new Plane(Vector3(0, 0, 1), Vector3(0, 0, -1), blueMat);
-		_shapes.push_back(p);
+		//Sphere* s = new Sphere(0.0f, 0.0f, 25.0f, 8.0f, redMat);
+		//_shapes.push_back(s);
+		//s = new Sphere(-2.5f, 0.0f, 25.0f, 3.0f, greenMat);
+		//_shapes.push_back(s);
+		//
+		//Plane* p = new Plane(Vector3(0, 0, 30), Vector3(0, 0, -1), blueMat);
+		//_shapes.push_back(p);
 
 		auto it = _shapes.begin();
 		auto end = _shapes.end();
@@ -44,7 +44,7 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/MCone.obj", Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f), magentaMat);
+		Mesh* m = new Mesh("models/cz.obj", Matrix::FromScale(Vector3::One * 10.0f).Multiply(Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f).Multiply(Matrix::FromTranslation(0, 0, -5))), magentaMat);
 		_meshes.push_back(m);
 
 		auto meshesIt = _meshes.begin();

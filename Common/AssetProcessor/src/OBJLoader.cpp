@@ -125,6 +125,10 @@ Face OBJLoader::ParseFace(std::string face)
 Vector3 OBJLoader::ParseVector3(std::string line)
 {
 	int i = 0;
+	while(line[i] == ' ')
+	{
+		++i;
+	}
 	std::string xS = "";
 	std::string yS = "";
 	std::string zS = "";

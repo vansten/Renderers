@@ -10,7 +10,7 @@
 #endif
 
 #if MULTITHREADED
-#define PC 1
+#define PC 0
 #endif
 
 #define ANTI_ALIASING 1
