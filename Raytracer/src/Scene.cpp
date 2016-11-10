@@ -34,8 +34,8 @@ namespace raytracer
 		//s = new Sphere(-2.5f, 0.0f, 25.0f, 3.0f, greenMat);
 		//_shapes.push_back(s);
 		//
-		//Plane* p = new Plane(Vector3(0, 0, 30), Vector3(0, 0, -1), blueMat);
-		//_shapes.push_back(p);
+		Plane* p = new Plane(Vector3(0, 0, 30), Vector3(0, 0, -1), blueMat);
+		_shapes.push_back(p);
 
 		auto it = _shapes.begin();
 		auto end = _shapes.end();

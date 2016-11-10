@@ -20,7 +20,10 @@ namespace raytracer
 			Vector3 transformedPos0 = transform.MultiplyByVector3(positions[f.VertexPositions[0]], 1);
 			Vector3 transformedPos1 = transform.MultiplyByVector3(positions[f.VertexPositions[1]], 1);
 			Vector3 transformedPos2 = transform.MultiplyByVector3(positions[f.VertexPositions[2]], 1);
-			_triangles.push_back(new Triangle(transformedPos0, transformedPos1, transformedPos2, material));
+			Vector3 transformedNormal0 = transform.MultiplyByVector3(normals[f.VertexNormals[0]], 0);
+			Vector3 transformedNormal1 = transform.MultiplyByVector3(normals[f.VertexNormals[1]], 0);
+			Vector3 transformedNormal2 = transform.MultiplyByVector3(normals[f.VertexNormals[2]], 0);
+			_triangles.push_back(new Triangle(transformedPos0, transformedPos1, transformedPos2, transformedNormal0, transformedNormal1, transformedNormal2, material));
 		}
 	}
 
