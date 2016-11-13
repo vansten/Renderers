@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/Vertex.h"
 #include "Plane.h"
 
 namespace raytracer
@@ -8,16 +9,13 @@ namespace raytracer
 	{
 	protected:
 		Plane* _plane;
-		Vector3 _vertex1Position;
-		Vector3 _vertex2Position;
-		Vector3 _vertex3Position;
-		Vector3 _vertex1Normal;
-		Vector3 _vertex2Normal;
-		Vector3 _vertex3Normal;
+		VertexPositionUVNormal _vertex1;
+		VertexPositionUVNormal _vertex2;
+		VertexPositionUVNormal _vertex3;
 		Vector3 _normal;
 
 	public:
-		Triangle(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 vn1, Vector3 vn2, Vector3 vn3, Material* material);
+		Triangle(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 vn1, Vector3 vn2, Vector3 vn3, Vector2 vt1, Vector2 vt2, Vector2 vt3, Material* material);
 		Triangle(const Triangle& other);
 		virtual ~Triangle();
 		virtual void Init() override;

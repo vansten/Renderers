@@ -1,6 +1,7 @@
 #include "../include/Sphere.h"
 
 #include "Vector.h"
+#include "../include/Defines.h"
 
 namespace raytracer
 {
@@ -56,26 +57,33 @@ namespace raytracer
 			float doubleA = 2 * a;
 			float t1 = (-b - det) / doubleA;
 			float t2 = (-b + det) / doubleA;
+			bool wasHit = false;
 
 			//If t1 > 0 then we have intersaction point
 			if(t1 > 0.0f)
 			{
+				wasHit = true;
 				point = r.Origin + r.Direction * t1;
 				normal = point - Center;
 				normal.Normalize();
-				hit.AddIntersectionPoint(IntersectionPoint(point, normal));
+				float u = asin(normal[0]) * InvPI + 0.5f;
+				float v = asin(normal[1]) * InvPI + 0.5f;
+				hit.AddIntersectionPoint(IntersectionPoint(point, normal, Vector2(u, v)));
 			}
 
 			//If t2 > 0 we MAY have intersection point. Just check if t2 isn't equal to t1 to make sure that intersection point isn't doubled
 			if(t2 > 0.0f && fabs(t1 - t2) > 0.000001f)
 			{
+				wasHit = true;
 				point = r.Origin + r.Direction * t1;
 				normal = point - Center;
 				normal.Normalize();
-				hit.AddIntersectionPoint(IntersectionPoint(point, normal));
+				float u = asin(normal[0]) * InvPI + 0.5f;
+				float v = asin(normal[1]) * InvPI + 0.5f;
+				hit.AddIntersectionPoint(IntersectionPoint(point, normal, Vector2(u, v)));
 			}
 
-			return true;
+			return wasHit;
 		}
 
 		return false;

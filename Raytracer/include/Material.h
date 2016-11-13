@@ -1,30 +1,34 @@
 #pragma once
 
 #include "../include/Types.h"
+#include "../include/Vector.h"
 
-class Material
+namespace raytracer
 {
-protected:
-	Color24 _diffuse;
-	Color24 _specular;
-	float _shininess;
-
-public:
-	Material(Color24 diffuse = Color24::White, Color24 specular = Color24::White, float shininess = 0.0f);
-	Material(const Material& other);
-	
-	inline Color24 GetDiffuse() const
+	class Material
 	{
-		return _diffuse;
-	}
+	protected:
+		Color24 _diffuse;
+		Color24 _specular;
+		float _shininess;
 
-	inline Color24 GetSpecular() const
-	{
-		return _specular;
-	}
+	public:
+		Material(Color24 diffuse = Color24::White, Color24 specular = Color24::White, float shininess = 0.0f);
+		Material(const Material& other);
 
-	inline float GetShininess() const
-	{
-		return _shininess;
-	}
-};
+		virtual inline Color24 GetDiffuse(Vector2 uvs) const
+		{
+			return _diffuse;
+		}
+
+		virtual inline Color24 GetSpecular(Vector2 uvs) const
+		{
+			return _specular;
+		}
+
+		virtual inline float GetShininess(Vector2 uvs) const
+		{
+			return _shininess;
+		}
+	};
+}

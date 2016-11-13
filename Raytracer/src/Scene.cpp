@@ -28,13 +28,19 @@ namespace raytracer
 		_materials.push_back(magentaMat);
 		Material* greenMat = new Material(Color24::Green, Color24::White, 256.0f);
 		_materials.push_back(greenMat);
+		Material* grayMat = new Material(Color24::White * 0.4f, Color24::Black, 0.0f);
+		_materials.push_back(grayMat);
+		Material* textureMat = new MaterialTexture("textures/sphere.tga", Color24::White * 0.2f, 32.0f);
+		_materials.push_back(textureMat);
+		Material* iceTextureMat = new MaterialTexture("textures/ice.tga", Color24::White, 64.0f);
+		_materials.push_back(iceTextureMat);
 
-		//Sphere* s = new Sphere(0.0f, 0.0f, 25.0f, 8.0f, redMat);
-		//_shapes.push_back(s);
-		//s = new Sphere(-2.5f, 0.0f, 25.0f, 3.0f, greenMat);
-		//_shapes.push_back(s);
-		//
-		Plane* p = new Plane(Vector3(0, 0, 30), Vector3(0, 0, -1), blueMat);
+		Sphere* s = new Sphere(-3.0f, 0.0f, 3.0f, 1.0f, textureMat);
+		_shapes.push_back(s);
+		s = new Sphere(3.0f, 0.0f, 3.0f, 1.0f, greenMat);
+		_shapes.push_back(s);
+		
+		Plane* p = new Plane(Vector3(0, -2, 0), Vector3(0, 1, 0), 0.05f, iceTextureMat);
 		_shapes.push_back(p);
 
 		auto it = _shapes.begin();
@@ -44,7 +50,7 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/cz.obj", Matrix::FromScale(Vector3::One * 10.0f).Multiply(Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f).Multiply(Matrix::FromTranslation(0, 0, -5))), magentaMat);
+		Mesh* m = new Mesh("models/cz.obj", Matrix::FromScale(Vector3::One * 10.0f).Multiply(Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f).Multiply(Matrix::FromTranslation(0, 0, -5))), textureMat);
 		_meshes.push_back(m);
 
 		auto meshesIt = _meshes.begin();
@@ -58,8 +64,8 @@ namespace raytracer
 		}
 
 		_lights.push_back(new AmbientLight(Color24::White * 0.05f));
-		_lights.push_back(new DirectionalLight(Vector3(0.0f, 0.0f, 1.0f), Color24::White * 0.4f));
-		_lights.push_back(new PointLight(Vector3(0, 0, -5.0f), Color24::White, 1.0f, 0.25f));
+		_lights.push_back(new DirectionalLight(Vector3(0.0f, -1.0f, 1.0f), Color24::White * 0.4f));
+		_lights.push_back(new PointLight(Vector3(0, 2, -2.0f), Color24::White, 1.0f, 0.25f));
 	}
 
 	void Scene::Shutdown()
@@ -156,7 +162,7 @@ namespace raytracer
 					const Material* mat = closestShape->GetMaterial();
 					if(mat != nullptr)
 					{
-						_image->SetPixel(i, j, mat->GetDiffuse());
+						_image->SetPixel(i, j, mat->GetDiffuse(Vector2::Zero));
 					}
 				}
 			}

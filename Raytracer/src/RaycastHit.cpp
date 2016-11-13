@@ -2,7 +2,7 @@
 
 namespace raytracer
 {
-	IntersectionPoint::IntersectionPoint(Vector3 point, Vector3 normal) : Point(point), Normal(normal)
+	IntersectionPoint::IntersectionPoint(Vector3 point, Vector3 normal, Vector2 uvs) : Point(point), Normal(normal), UVs(uvs)
 	{
 
 	}

@@ -28,4 +28,32 @@ namespace raytracer
 		
 		return att * (CalculateDiffuse(intersection, material, L) * _intensity + CalculateSpecular(camera, intersection, material, L));
 	}
+
+	bool PointLight::IsObscured(const Shape* shape, const Vector3& origin, const Vector3& direction, const std::vector<Shape*>::iterator shapesBegin, const std::vector<Shape*>::iterator shapesEnd) const
+	{
+		float squaredLength = direction.LengthSquared();
+		Ray r(origin, direction);
+		RaycastHit hit;
+		bool intersects = false;
+		for(auto shapesIt = shapesBegin; shapesIt != shapesEnd; ++shapesIt)
+		{
+			if((*shapesIt) != shape)
+			{
+				if(r.Intersects(*(*shapesIt), hit))
+				{
+					std::vector<IntersectionPoint> intersections = hit.GetIntersectionPoints();
+					int hitsCount = intersections.size();
+					for(int i = 0; i < hitsCount; ++i)
+					{
+						if((intersections[0].Point - _position).LengthSquared() < squaredLength)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 }

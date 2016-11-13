@@ -2,7 +2,7 @@
 
 #include "Ray.h"
 #include "RaycastHit.h"
-#include "../include/Material.h"
+#include "../include/MaterialTexture.h"
 
 namespace raytracer
 {

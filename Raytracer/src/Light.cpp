@@ -1,4 +1,5 @@
 #include "../include/Light.h"
+#include "../include/Console.h"
 
 namespace raytracer
 {
@@ -29,7 +30,7 @@ namespace raytracer
 		}
 
 		float NdotL = clamp(Vector3::Dot(L, intersection.Normal));
-		return NdotL * _color * material->GetDiffuse();
+		return NdotL * _color * material->GetDiffuse(intersection.UVs);
 	}
 
 	Color24 Light::CalculateSpecular(const Camera* camera, const IntersectionPoint& intersection, const Material* material, const Vector3& L) const
@@ -42,6 +43,6 @@ namespace raytracer
 		Vector3 V = (camera->GetPosition() - intersection.Point).Normalized();
 		Vector3 H = (L + V).Normalized();
 		float NdotH = clamp(Vector3::Dot(intersection.Normal, H));
-		return pow(NdotH, material->GetShininess()) * material->GetSpecular();
+		return pow(NdotH, material->GetShininess(intersection.UVs)) * material->GetSpecular(intersection.UVs);
 	}
 }

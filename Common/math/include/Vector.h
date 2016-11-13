@@ -8,6 +8,8 @@
 
 const float PI = 3.14159265359f;
 const float TwoPI = 2.0f * PI;
+const float InvPI = 1.0f / PI;
+const float Inv2PI = 1.0f / TwoPI;
 const float PiOver2 = PI * 0.5f;
 const float PiOver4 = PI * 0.25f;
 const float Deg2Rad = PI / 180.0f;

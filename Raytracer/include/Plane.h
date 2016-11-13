@@ -11,12 +11,13 @@ namespace raytracer
 		Vector3 _planePoint; //x,y,z
 		Vector3 _normal; //A, B, C
 		float _d; //-D
+		float _density;
 
 	public:
 
-		Plane(Material* material);
-		Plane(float x0, float y0, float z0, float nx, float ny, float nz, Material* material);
-		Plane(Vector3 point, Vector3 normal, Material* material);
+		Plane(float density, Material* material);
+		Plane(float x0, float y0, float z0, float nx, float ny, float nz, float density, Material* material);
+		Plane(Vector3 point, Vector3 normal, float density, Material* material);
 		Plane(const Plane& other);
 		virtual ~Plane();
 

@@ -119,7 +119,7 @@ public:
 
 	Color24(float r = 0.0f, float g = 0.0f, float b = 0.0f) : R(clamp(r)), G(clamp(g)), B(clamp(b)) {}
 	Color24(const Color24& other) : R(other.R), G(other.G), B(other.B) {}
-	Color24(const Color32& other) : R(other.R), G(other.G), B(other.B) {}
+	Color24(const Color32& other) : R(other.R / 255.0f), G(other.G / 255.0f), B(other.B / 255.0f) {}
 
 	Color24 operator+(const Color24& c) const
 	{

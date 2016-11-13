@@ -127,7 +127,7 @@ namespace raytracer
 #if ORTHO
 		_camera = new OrthoCamera(ORTHO_SIZE, Vector3(0, 0, -10));
 #else
-		_camera = new PerspectiveCamera(60.0f, 0.001f, 1000.0f, Vector3(0, 0, -10), Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f));
+		_camera = new PerspectiveCamera(60.0f, 0.001f, 1000.0f, Vector3(0.0f, 0.0f, -10.0f), Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f));
 #endif
 
 		return true;
@@ -360,7 +360,7 @@ namespace raytracer
 											0 //clrimportant
 		};
 		StretchDIBits(GetDC(_windowHandle),
-					  block->GetX(), _windowHeight - block->GetY() - height, width, height,
+					  block->GetX(), _windowHeight - block->GetY() - height * 1.5f, width, height,
 					  0, 0, width, height,
 					  uintpixels,
 					  &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);

@@ -102,7 +102,7 @@ namespace raytracer
 #else
 		if(closestShape)
 		{
-			return closestShape->GetMaterial()->GetDiffuse();
+			return closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 		}
 #endif
 
