@@ -45,7 +45,7 @@ namespace raytracer
 					int hitsCount = intersections.size();
 					for(int i = 0; i < hitsCount; ++i)
 					{
-						if((intersections[0].Point - _position).LengthSquared() < squaredLength)
+						if((intersections[0].Point - _position).LengthSquared() < squaredLength && (intersections[0].Point - origin).LengthSquared() < squaredLength)
 						{
 							return true;
 						}

@@ -16,15 +16,14 @@ namespace raytracer
 
 	enum class MenuCommands
 	{
-		RENDER_IMAGE,
-		SAVE_IMAGE
+		RENDER_IMAGE
 	};
 
 	class Engine
 	{
 	protected:
-		const int _windowWidth = 1280;
-		const int _windowHeight = 720;
+		const int _windowWidth = 900;
+		const int _windowHeight = 900;
 		float _pixelWidth;
 		float _pixelHeight;
 
@@ -57,8 +56,6 @@ namespace raytracer
 
 		void RenderScreenPixels(int left, int right, int bottom, int top, const Color24* pixels) const;
 		void PresentBlockWork(const Block* block) const;
-
-		void SaveImage() const;
 
 		static Engine* GetInstance();
 

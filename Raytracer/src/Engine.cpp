@@ -57,15 +57,9 @@ namespace raytracer
 
 		_menuHandle = CreateMenu();
 		AppendMenu(_menuHandle, MF_STRING, (UINT)MenuCommands::RENDER_IMAGE, "Render");
-		AppendMenu(_menuHandle, MF_STRING, (UINT)MenuCommands::SAVE_IMAGE, "Save image");
 		SetMenu(_windowHandle, _menuHandle);
-		EnableMenuItem(_menuHandle, (UINT)MenuCommands::SAVE_IMAGE, MF_DISABLED);
 		
 		ShowWindow(_windowHandle, nCmdShow);
-
-		Image* i = new Image(_windowWidth, _windowHeight, Color24::Black);
-		RenderScreenPixels(0, _windowWidth, 0, _windowHeight, i->GetPixels());
-		delete i;
 
 		if(!SetupScene())
 		{
@@ -73,17 +67,8 @@ namespace raytracer
 			return false;
 		}
 
-#if BLOCKS
-
-#if MULTITHREADED
-#if PC
-		_threadCount = 4;
-#else
+		//Thread count
 		_threadCount = 8;
-#endif
-#else
-		_threadCount = 1;
-#endif
 
 		int blockRows = 32;
 		int blockCount = blockRows * blockRows;
@@ -99,8 +84,6 @@ namespace raytracer
 		int usedWidth = 0;
 		int usedHeight = 0;
 
-#if USE_HILBERT_CURVE
-
 		for(int i = 0; i < blockCount; ++i)
 		{
 			Vector2 xy = HilbertCurve::Evaluate(blockCount, i);
@@ -108,26 +91,10 @@ namespace raytracer
 			_blocks.push_back(b);
 		}
 
-#else
-
-		for(int i = 0; i < blockRows; ++i)
-		{
-			for(int j = 0; j < blockRows; ++j)
-			{
-				_blocks.push_back(new Block(i * widthPerBlock, j * heightPerBlock, min(_windowWidth - usedWidth, widthPerBlock), min(_windowHeight - usedHeight, heightPerBlock), Color24::White * 0.1f));
-				usedHeight += heightPerBlock;
-			}
-			usedWidth += widthPerBlock;
-			usedHeight = 0;
-		}
-
-#endif
-#endif
-
 #if ORTHO
 		_camera = new OrthoCamera(ORTHO_SIZE, Vector3(0, 0, -10));
 #else
-		_camera = new PerspectiveCamera(60.0f, 0.001f, 1000.0f, Vector3(0.0f, 0.0f, -10.0f), Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f));
+		_camera = new PerspectiveCamera(75.0f, 0.001f, 1000.0f, Vector3(0.0f, 0.0f, -10.0f), Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f));
 #endif
 
 		return true;
@@ -193,25 +160,8 @@ namespace raytracer
 
 	void Engine::Render()
 	{
-		if(_renderedImage)
-		{
-			delete _renderedImage;
-			_renderedImage = 0;
-		}
-
-		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::Black);
-		if(_renderedImage)
-		{
-			RenderScreenPixels(0, _windowWidth, 0, _windowHeight, _renderedImage->GetPixels());
-			delete _renderedImage;
-			_renderedImage = 0;
-		}
-
-		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::Black);
-
 		Timer t;
 		t.Start();
-#if BLOCKS
 
 		_currentBlockIndex = 0;
 		int blocksPerThread = _blocks.size() / _threadCount;
@@ -229,19 +179,11 @@ namespace raytracer
 		{
 			(*threadsIt).join();
 		}
-#else
-		_renderedImage = new Image(_windowWidth, _windowHeight, Color24::Black);
-
-		_scene->Render(_renderedImage);
-		RenderScreenPixels(0, _windowWidth, 0, _windowHeight, _renderedImage->GetPixels());
-
-#endif //BLOCKS
 
 		float renderTime = t.GetElapsedTime();
 		Console::WriteFormat("Render took: %f s\n", renderTime);
 
 		int response = MessageBox(_windowHandle, "Rendering completed", "Success", MB_OK);
-		EnableMenuItem(_menuHandle, (UINT)MenuCommands::SAVE_IMAGE, MF_ENABLED);
 	}
 
 	void Engine::RenderBlock(Block* b) const
@@ -253,23 +195,11 @@ namespace raytracer
 
 	void Engine::RenderBlocks(const int threadIndex, const int blocksPerThread)
 	{
-#if USE_HILBERT_CURVE
-
 		int i;
 		while(GetNextBlockIndex(i))
 		{
 			RenderBlock(_blocks.at(i));
 		}
-
-#else
-
-		int max = min(threadIndex * blocksPerThread + blocksPerThread, _blocks.size());
-		for(int i = threadIndex * blocksPerThread; i < max; ++i)
-		{
-			RenderBlock(_blocks.at(i));
-		}
-
-#endif
 	}
 
 	bool Engine::GetNextBlockIndex(int& index)
@@ -342,7 +272,6 @@ namespace raytracer
 			{
 				Color24 pixel = pixels[j * width + i];
 				uintpixels[j * width + i] = make(pixel.R * 255, pixel.G * 255, pixel.B * 255, 255);
-				_renderedImage->SetPixel(i + block->GetX(), j + block->GetY(), pixel);
 			}
 		}
 
@@ -366,76 +295,6 @@ namespace raytracer
 					  &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 
 		delete[] uintpixels;
-	}
-
-	void Engine::SaveImage() const
-	{
-		if(_renderedImage == nullptr)
-		{
-			MessageBox(_windowHandle, "You must render image first", "Oops", MB_OK);
-			return;
-		}
-
-		IFileSaveDialog* saveFileDialog;
-		if(SUCCEEDED(CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&saveFileDialog))))
-		{
-			COMDLG_FILTERSPEC rgSpec[] =
-			{
-				{L"TGA file", L"*.tga;*.TGA"}
-			};
-			saveFileDialog->SetFileTypes(1, rgSpec);
-			if(SUCCEEDED(saveFileDialog->Show(_windowHandle)))
-			{
-				IShellItem* chosenItem;
-				saveFileDialog->GetResult(&chosenItem);
-				if(chosenItem != nullptr)
-				{
-					const int maxLength = 500;
-					LPWSTR filename;
-					chosenItem->GetDisplayName(SIGDN_FILESYSPATH, &filename);
-					char* filenameChar = new char[maxLength];
-					wcstombs(filenameChar, filename, maxLength);
-					int dotIndex = -1;
-					int lastChar = -1;
-					for(int i = 0; i < maxLength; ++i)
-					{
-						if(filenameChar[i] == '.')
-						{
-							dotIndex = i;
-						}
-						else if(filenameChar[i] == '\0')
-						{
-							lastChar = i;
-						}
-					}
-					if(dotIndex == -1)
-					{
-						char buffer[maxLength + 5];
-						memcpy(buffer, filenameChar, sizeof(char) * (maxLength));
-						buffer[lastChar] = '.';
-						buffer[lastChar + 1] = 't';
-						buffer[lastChar + 2] = 'g';
-						buffer[lastChar + 3] = 'a';
-						buffer[lastChar + 4] = '\0';
-						delete[] filenameChar;
-						filenameChar = new char[lastChar + 5];
-						memcpy(filenameChar, buffer, sizeof(char) * (lastChar + 5));
-					}
-					else
-					{
-						if(filenameChar[dotIndex + 1] != 't' || filenameChar[dotIndex + 2] != 'g' || filenameChar[dotIndex + 3] != 'a')
-						{
-							filenameChar[dotIndex + 1] = 't';
-							filenameChar[dotIndex + 2] = 'g';
-							filenameChar[dotIndex + 3] = 'a';
-							filenameChar[dotIndex + 4] = '\0';
-						}
-					}
-					TGASerializer::SaveTGA(filenameChar, _renderedImage->GetPixels(), _windowWidth, _windowHeight);
-					delete[] filenameChar;
-				}
-			}
-		}
 	}
 
 	Engine* Engine::GetInstance()
@@ -480,9 +339,6 @@ namespace raytracer
 				{
 				case (UINT)MenuCommands::RENDER_IMAGE:
 					Engine::GetInstance()->Render();
-					break;
-				case (UINT)MenuCommands::SAVE_IMAGE:
-					Engine::GetInstance()->SaveImage();
 					break;
 				}
 			}

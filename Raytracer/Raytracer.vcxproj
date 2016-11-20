@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="src\AmbientLight.cpp" />
     <ClCompile Include="src\Block.cpp" />
+    <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Engine.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="src\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Box.h" />
     <ClInclude Include="include\AmbientLight.h" />
     <ClInclude Include="include\Block.h" />
     <ClInclude Include="include\Camera.h" />
@@ -171,6 +173,7 @@
     <ClInclude Include="include\RaycastHit.h" />
     <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Shape.h" />
+    <ClInclude Include="include\ShapesInclude.h" />
     <ClInclude Include="include\Sphere.h" />
     <ClInclude Include="include\Triangle.h" />
   </ItemGroup>

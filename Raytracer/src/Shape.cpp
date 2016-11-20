@@ -2,12 +2,12 @@
 
 namespace raytracer
 {
-	Shape::Shape(Material* material) : _material(material)
+	Shape::Shape(Material* material) : _material(material), _calculateLights(true)
 	{
 
 	}
 
-	Shape::Shape(const Shape& other) : _material(other._material)
+	Shape::Shape(const Shape& other) : _material(other._material), _calculateLights(other._calculateLights)
 	{
 
 	}
@@ -35,6 +35,11 @@ namespace raytracer
 	void Shape::SetMaterial(Material * material)
 	{
 		_material = material;
+	}
+
+	void Shape::SetCalculateLights(bool calculate)
+	{
+		_calculateLights = calculate;
 	}
 
 	bool Shape::Intersects(const Ray& r, RaycastHit& hit) const

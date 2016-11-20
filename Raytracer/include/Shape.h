@@ -12,6 +12,7 @@ namespace raytracer
 
 	protected:
 		Material* _material;
+		bool _calculateLights;
 
 	public:
 		Shape(Material* material = nullptr);
@@ -25,6 +26,12 @@ namespace raytracer
 		inline const Material* GetMaterial() const
 		{
 			return _material;
+		}
+
+		void SetCalculateLights(bool calculate);
+		inline const bool CalculateLights() const
+		{
+			return _calculateLights;
 		}
 
 	protected:

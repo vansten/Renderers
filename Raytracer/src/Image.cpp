@@ -30,19 +30,4 @@ namespace raytracer
 			_pixels[y * _width + x] = color;
 		}
 	}
-
-	const Color24 Image::GetPixel(uint32 x, uint32 y) const
-	{
-		if(x >= 0 && y >= 0 && x < _width && y < _height)
-		{
-			return _pixels[y * _width + x];
-		}
-
-		return Color24::Magenta;
-	}
-
-	const Color24* Image::GetPixels() const
-	{
-		return _pixels;
-	}
 }

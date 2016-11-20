@@ -2,31 +2,26 @@
 
 #include "Triangle.h"
 #include "Matrix.h"
+#include "ShapesInclude.h"
 
 namespace raytracer
 {
-	class Mesh
+	class Mesh : public Shape
 	{
 	protected:
 		std::vector<Triangle*> _triangles;
-		Material* _material;
 		Matrix _transform;
+		Box* _boundingBox;
 
 	public:
 		Mesh(const char* filename, const Matrix& transform, Material* material);
+		Mesh(const Mesh& other);
 		~Mesh();
 
-		bool Init();
-		void Shutdown();
+		virtual void Init() override;
+		virtual void Shutdown() override;
 
-		inline std::vector<Triangle*> GetTriangles()
-		{
-			return _triangles;
-		}
-
-		inline Vector3 GetTransformedVector(Vector3 vertex, float w)
-		{
-			return _transform.MultiplyByVector3(vertex, w);
-		}
+	protected:
+		virtual bool Intersects(const Ray& r, RaycastHit& hit) const override;
 	};
 }

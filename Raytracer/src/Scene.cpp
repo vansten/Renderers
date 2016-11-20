@@ -2,12 +2,11 @@
 
 #include "Console.h"
 
-#include "../include/Sphere.h"
-#include "../include/Plane.h"
 #include "../include/Engine.h"
 
 #include "../include/Defines.h"
 
+#include "../include/ShapesInclude.h"
 #include "../include/LightsInclude.h"
 
 namespace raytracer
@@ -20,28 +19,46 @@ namespace raytracer
 
 	void Scene::Init()
 	{
-		Material* redMat = new Material(Color24::Red, Color24::White, 64.0f);
+		Material* redMat = new Material(Color24::Red, Color24::White * 0.01f, 64.0f);
 		_materials.push_back(redMat);
-		Material* blueMat = new Material(Color24::Blue, Color24::White, 128.0f);
+		Material* blueMat = new Material(Color24::Blue, Color24::White * 0.01f, 128.0f);
 		_materials.push_back(blueMat);
 		Material* magentaMat = new Material(Color24::Magenta, Color24::White, 8.0f);
 		_materials.push_back(magentaMat);
 		Material* greenMat = new Material(Color24::Green, Color24::White, 256.0f);
 		_materials.push_back(greenMat);
-		Material* grayMat = new Material(Color24::White * 0.4f, Color24::Black, 0.0f);
+		Material* grayMat = new Material(Color24::White * 0.4f, Color24::White * 0.01f, 256.0f);
 		_materials.push_back(grayMat);
+		Material* whiteMat = new Material(Color24::White, Color24::White, 256.0f);
+		_materials.push_back(whiteMat);
+		Material* blackMat = new Material(Color24::Black, Color24::Black, 0.0f);
+		_materials.push_back(blackMat);
 		Material* textureMat = new MaterialTexture("textures/sphere.tga", Color24::White * 0.2f, 32.0f);
 		_materials.push_back(textureMat);
 		Material* iceTextureMat = new MaterialTexture("textures/ice.tga", Color24::White, 64.0f);
 		_materials.push_back(iceTextureMat);
-
-		Sphere* s = new Sphere(-3.0f, 0.0f, 3.0f, 1.0f, textureMat);
-		_shapes.push_back(s);
-		s = new Sphere(3.0f, 0.0f, 3.0f, 1.0f, greenMat);
-		_shapes.push_back(s);
 		
-		Plane* p = new Plane(Vector3(0, -2, 0), Vector3(0, 1, 0), 0.05f, iceTextureMat);
-		_shapes.push_back(p);
+		float size = 5.0f;
+		//Box* b = new Box(0, 0, 0.0f, size, size, size, Matrix::Identity, grayMat);
+		//_shapes.push_back(b);
+		//b = new Box(size, 0, -size, size, size, size, Matrix::Identity, blueMat);
+		//_shapes.push_back(b);
+		//b = new Box(-size , 0, -size, size, size, size, Matrix::Identity, redMat);
+		//_shapes.push_back(b);
+		//b = new Box(0, -size, -size, size, size, size, Matrix::Identity, grayMat);
+		//_shapes.push_back(b);
+		//b = new Box(0, size * 0.5f, -size, size * 0.3f, size * 0.000001f, size * 0.3f, Matrix::Identity, /whiteMat);
+		//_shapes.push_back(b);
+		//b->SetCalculateLights(false);
+
+		float radius = size * 0.15f;
+		//Sphere* reflectiveSphere = new Sphere(-size * 0.3f + radius, -size * 0.5f + radius, -size * 0.8f, radius, greenMat);
+		//_shapes.push_back(reflectiveSphere);
+		//Sphere* refractiveSphere = new Sphere(size * 0.3f - radius, -size * 0.5f + radius, -size * 1.1f, radius, magentaMat);
+		//_shapes.push_back(refractiveSphere);
+		
+		Mesh* m = new Mesh("models/cz.obj", Matrix::Identity, textureMat);
+		_shapes.push_back(m);
 
 		auto it = _shapes.begin();
 		auto end = _shapes.end();
@@ -50,22 +67,9 @@ namespace raytracer
 			(*it)->Init();
 		}
 
-		Mesh* m = new Mesh("models/cz.obj", Matrix::FromScale(Vector3::One * 10.0f).Multiply(Matrix::FromXYZRotationDegrees(0.0f, 0.0f, 0.0f).Multiply(Matrix::FromTranslation(0, 0, -5))), textureMat);
-		_meshes.push_back(m);
-
-		auto meshesIt = _meshes.begin();
-		auto meshesEnd = _meshes.end();
-		for(meshesIt; meshesIt != meshesEnd; ++meshesIt)
-		{
-			if(!(*meshesIt)->Init())
-			{
-				Console::WriteLine("Couldn't initialize mesh");
-			}
-		}
-
 		_lights.push_back(new AmbientLight(Color24::White * 0.05f));
-		_lights.push_back(new DirectionalLight(Vector3(0.0f, -1.0f, 1.0f), Color24::White * 0.4f));
-		_lights.push_back(new PointLight(Vector3(0, 2, -2.0f), Color24::White, 1.0f, 0.25f));
+		//_lights.push_back(new DirectionalLight(Vector3(0, 0, 1), Color24::White * 0.2f));
+		_lights.push_back(new PointLight(Vector3(0.0f, size * 0.15f, -size), Color24::White, 1.0f, 0.35f));
 	}
 
 	void Scene::Shutdown()
@@ -78,15 +82,6 @@ namespace raytracer
 			delete (*it);
 		}
 		_shapes.clear();
-
-		auto meshesIt = _meshes.begin();
-		auto meshesEnd = _meshes.end();
-		for(meshesIt; meshesIt != meshesEnd; ++meshesIt)
-		{
-			(*meshesIt)->Shutdown();
-			delete (*meshesIt);
-		}
-		_meshes.clear();
 
 		auto materialsIt = _materials.begin();
 		auto materialsEnd = _materials.end();
@@ -105,67 +100,5 @@ namespace raytracer
 			(*lightsIt) = 0;
 		}
 		_lights.clear();
-	}
-
-	void Scene::Render(Image* _image) const
-	{
-		if(!_image)
-		{
-			return;
-		}
-
-		int width = _image->GetWidth();
-		int height = _image->GetHeight();
-		RaycastHit hit;
-		auto shapesEnd = _shapes.end();
-		auto hitPoints = hit.GetIntersectionPoints();
-		float halfWidth = Engine::GetInstance()->GetWidth() * 0.5f;
-		float halfHeight = Engine::GetInstance()->GetHeight() * 0.5f;
-		float onePerAR = halfHeight / halfWidth;
-		float pixelWidth = 1.0f / halfWidth;
-		float pixelHeight = 1.0f / halfHeight;
-		for(int i = 0; i < width; ++i)
-		{
-			for(int j = 0; j < height; ++j)
-			{
-#if ORTHO
-				//Ray r(i / 1280.0f, j / 720.0f, -10.0f, 0.0f, 0.0f, 1.0f);
-				float x = -1.0f + (i + 0.5f) * pixelWidth;
-				float y = 1.0f - (j + 0.5f) * pixelHeight;
-				Ray r(x, y, -10.0f, 0.0f, 0.0f, 1.0f);
-				r.Origin[1] *= onePerAR;
-#else
-				Ray r(i, j, -10, 0, 0, 1);
-#endif
-				Shape* closestShape = nullptr;
-				float closestSq = FLT_MAX;
-				for(auto shapesIt = _shapes.begin(); shapesIt != shapesEnd; ++shapesIt)
-				{
-					if(r.Intersects(*(*shapesIt), hit))
-					{
-						hitPoints = hit.GetIntersectionPoints();
-						int hitPointsSize = hitPoints.size();
-						for(int k = 0; k < hitPointsSize; ++k)
-						{
-							float distSq = (hitPoints[k].Point - r.Origin).LengthSquared();
-							if(distSq < closestSq)
-							{
-								closestSq = distSq;
-								closestShape = (*shapesIt);
-							}
-						}
-					}
-				}
-
-				if(closestShape != nullptr)
-				{
-					const Material* mat = closestShape->GetMaterial();
-					if(mat != nullptr)
-					{
-						_image->SetPixel(i, j, mat->GetDiffuse(Vector2::Zero));
-					}
-				}
-			}
-		}
 	}
 }

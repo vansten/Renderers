@@ -4,7 +4,7 @@
 
 namespace raytracer
 {
-	Mesh::Mesh(const char* filename, const Matrix& transform, Material* material) : _transform(transform)
+	Mesh::Mesh(const char* filename, const Matrix& transform, Material* material) : _transform(transform), Shape(material)
 	{
 		std::vector<Vector3> positions;
 		std::vector<Vector3> normals;
@@ -28,13 +28,42 @@ namespace raytracer
 			Vector2 uv3 = texCoords[f.VertexUVs[2]];
 			_triangles.push_back(new Triangle(transformedPos0, transformedPos1, transformedPos2, transformedNormal0, transformedNormal1, transformedNormal2, uv1, uv2, uv3, material));
 		}
+
+		float minX, minY, minZ, maxX, maxY, maxZ;
+		minX = minY = minZ = FLT_MAX;
+		maxX = maxY = maxZ = -FLT_MAX;
+		Vector3 center;
+		size = (int)positions.size();
+		for(int i = 0; i < size; ++i)
+		{
+			center += positions[i];
+			minX = fmin(minX, positions[i][0]);
+			minY = fmin(minY, positions[i][1]);
+			minZ = fmin(minZ, positions[i][2]);
+			maxX = fmax(maxX, positions[i][0]);
+			maxY = fmax(maxY, positions[i][1]);
+			maxZ = fmax(maxZ, positions[i][2]);
+		}
+		center /= (float) size;
+		Vector3 boxSize = Vector3(maxX, maxY, maxZ) - Vector3(minX, minY, minZ);
+		_boundingBox = new Box(center, boxSize, transform, nullptr);
 	}
 
+	Mesh::Mesh(const Mesh& other) : Shape(other)
+	{
+		int size = other._triangles.size();
+		for(int i = 0; i < size; ++i)
+		{
+			_triangles.push_back(new Triangle(*other._triangles[i]));
+		}
+		_boundingBox = new Box(*other._boundingBox);
+		_transform = other._transform;
+	}
 
 	Mesh::~Mesh()
 	{}
 
-	bool Mesh::Init()
+	void Mesh::Init()
 	{
 		auto trianglesIt = _triangles.begin();
 		auto trianglesEnd = _triangles.end();
@@ -42,7 +71,10 @@ namespace raytracer
 		{
 			(*trianglesIt)->Init();
 		}
-		return true;
+		if(_boundingBox != nullptr)
+		{
+			_boundingBox->Init();
+		}
 	}
 
 	void Mesh::Shutdown()
@@ -55,5 +87,41 @@ namespace raytracer
 			delete (*triangleIt);
 			(*triangleIt) = 0;
 		}
+	}
+
+	bool Mesh::Intersects(const Ray& r, RaycastHit& hit) const
+	{
+		if(!r.Intersects(*_boundingBox, hit))
+		{
+			return false;
+		}
+
+		int size = _triangles.size();
+		Triangle* closest = nullptr;
+		float closestDistance = FLT_MAX;
+		IntersectionPoint closestIP;
+		for(int i = 0; i < size; ++i)
+		{
+			if(r.Intersects(*_triangles[i], hit))
+			{
+				IntersectionPoint intersection = hit.GetIntersectionPoints()[0];
+				float distance = (intersection.Point - r.Origin).Length();
+				if(distance < closestDistance)
+				{
+					closestDistance = distance;
+					closest = _triangles[i];
+					closestIP = intersection;
+				}
+			}
+		}
+
+		if(closest != nullptr)
+		{
+			hit.Clear();
+			hit.AddIntersectionPoint(closestIP);
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -89,12 +89,19 @@ namespace raytracer
 		if(closestShape)
 		{
 			Color24 color = Color24::Black;
-			RaycastHit secondHit;
-			Ray ray;
-			ray.Origin = closestIP.Point;
-			for(auto lightsIt = lightsBegin; lightsIt != lightsEnd; ++lightsIt)
+			if(closestShape->CalculateLights())
 			{
-				color += (*lightsIt)->Affect(closestShape, closestIP, Engine::GetInstance()->GetCamera(), shapesBegin, shapesEnd);
+				RaycastHit secondHit;
+				Ray ray;
+				ray.Origin = closestIP.Point;
+				for(auto lightsIt = lightsBegin; lightsIt != lightsEnd; ++lightsIt)
+				{
+					color += (*lightsIt)->Affect(closestShape, closestIP, Engine::GetInstance()->GetCamera(), shapesBegin, shapesEnd);
+				}
+			}
+			else
+			{
+				color = closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 			}
 
 			return color;
