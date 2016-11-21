@@ -23,7 +23,7 @@ namespace raytracer
 		Block(int left, int bottom, int width, int height, Color24 backgroundColor = Color24::White);
 		~Block();
 		void Render(const Scene* scene, const Camera* camera);
-		Color24 CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd);
+		Color24 CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd, int steps);
 		Color24 CastRays(const Pixel& center, int maxSteps, float pixelWidth, float pixelHeight, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, const Camera* camera, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd);
 		void Clear();
 

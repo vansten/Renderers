@@ -3,7 +3,7 @@
 
 namespace raytracer
 {
-	MaterialTexture::MaterialTexture(const char* textureName, Color24 specular, float shininess) : Material(Color24::White, specular, shininess), _diffuseMap(nullptr)
+	MaterialTexture::MaterialTexture(const char* textureName, Color24 specular, float shininess, float reflectance, float refraction) : Material(Color24::White, specular, shininess, reflectance, refraction), _diffuseMap(nullptr)
 	{
 		TGASerializer::LoadTGA(textureName, &_diffuseMap);
 	}

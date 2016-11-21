@@ -37,29 +37,29 @@ namespace raytracer
 		_materials.push_back(textureMat);
 		Material* iceTextureMat = new MaterialTexture("textures/ice.tga", Color24::White, 64.0f);
 		_materials.push_back(iceTextureMat);
+		Material* refractionMat = new Material(Color24::White, Color24::White, 128.0f, 0.0f, 1.0f);
+		_materials.push_back(refractionMat);
+		Material* reflectionMat = new Material(Color24::White, Color24::White, 128.0f, 1.0f, 0.0f);
+		_materials.push_back(reflectionMat);
 		
 		float size = 5.0f;
-		//Box* b = new Box(0, 0, 0.0f, size, size, size, Matrix::Identity, grayMat);
-		//_shapes.push_back(b);
-		//b = new Box(size, 0, -size, size, size, size, Matrix::Identity, blueMat);
-		//_shapes.push_back(b);
-		//b = new Box(-size , 0, -size, size, size, size, Matrix::Identity, redMat);
-		//_shapes.push_back(b);
-		//b = new Box(0, -size, -size, size, size, size, Matrix::Identity, grayMat);
-		//_shapes.push_back(b);
-		//b = new Box(0, size * 0.5f, -size, size * 0.3f, size * 0.000001f, size * 0.3f, Matrix::Identity, /whiteMat);
-		//_shapes.push_back(b);
-		//b->SetCalculateLights(false);
+		Box* b = new Box(0, 0, 0.0f, size, size, size, Matrix::Identity, grayMat);
+		_shapes.push_back(b);
+		b = new Box(size, 0, -size, size, size, size, Matrix::Identity, blueMat);
+		_shapes.push_back(b);
+		b = new Box(-size , 0, -size, size, size, size, Matrix::Identity, redMat);
+		_shapes.push_back(b);
+		b = new Box(0, -size, -size, size, size, size, Matrix::Identity, grayMat);
+		_shapes.push_back(b);
+		b = new Box(0, size * 0.5f, -size, size * 0.3f, size * 0.000001f, size * 0.3f, Matrix::Identity, whiteMat);
+		_shapes.push_back(b);
 
 		float radius = size * 0.15f;
-		//Sphere* reflectiveSphere = new Sphere(-size * 0.3f + radius, -size * 0.5f + radius, -size * 0.8f, radius, greenMat);
-		//_shapes.push_back(reflectiveSphere);
-		//Sphere* refractiveSphere = new Sphere(size * 0.3f - radius, -size * 0.5f + radius, -size * 1.1f, radius, magentaMat);
-		//_shapes.push_back(refractiveSphere);
+		Sphere* reflectiveSphere = new Sphere(-size * 0.3f + radius, -size * 0.5f + radius, -size * 0.8f, radius, reflectionMat);
+		_shapes.push_back(reflectiveSphere);
+		Sphere* refractiveSphere = new Sphere(size * 0.3f - radius, -size * 0.5f + radius, -size * 1.1f, radius, refractionMat);
+		_shapes.push_back(refractiveSphere);
 		
-		Mesh* m = new Mesh("models/cz.obj", Matrix::Identity, textureMat);
-		_shapes.push_back(m);
-
 		auto it = _shapes.begin();
 		auto end = _shapes.end();
 		for(it; it != end; ++it)

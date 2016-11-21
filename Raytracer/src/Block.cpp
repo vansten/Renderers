@@ -54,13 +54,13 @@ namespace raytracer
 					_renderedImage->SetPixel(i - _x0, j - _y0, CastRays(pixel, MAX_STEPS, pixelWidth, pixelHeight, shapesBegin, shapesEnd, camera, lightsBegin, lightsEnd));
 #else
 					camera->ConstructRay(r, pixel);
-					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd, lightsBegin, lightsEnd));
+					_renderedImage->SetPixel(i - _x0, j - _y0, CastRay(r, shapesBegin, shapesEnd, lightsBegin, lightsEnd, MAX_RECURSIVE));
 #endif
 			}
 		}
 	}
 
-	Color24 Block::CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd)
+	Color24 Block::CastRay(const Ray& r, std::vector<Shape*>::iterator shapesBegin, std::vector<Shape*>::iterator shapesEnd, std::vector<Light*>::iterator lightsBegin, std::vector<Light*>::iterator lightsEnd, int steps)
 	{
 		RaycastHit hit;
 		Shape* closestShape = nullptr;
@@ -88,7 +88,33 @@ namespace raytracer
 #if LIGHTS
 		if(closestShape)
 		{
-			Color24 color = Color24::Black;
+			float reflectance = closestShape->GetMaterial()->GetReflectance();
+			float refraction = closestShape->GetMaterial()->GetRefraction();
+			float diffuse = clamp(1.0f - reflectance - refraction);
+
+			Color24 reflectionColor;
+			Color24 refractionColor;
+
+			if(steps > 0)
+			{
+
+				if(closestShape->GetMaterial()->IsReflective())
+				{
+					Ray ray(closestIP.Point - r.Direction * 0.0001f, Reflect(r.Direction, closestIP.Normal));
+					reflectionColor = CastRay(ray, shapesBegin, shapesEnd, lightsBegin, lightsEnd, steps - 1);
+				}
+
+				if(closestShape->GetMaterial()->IsRefractive())
+				{
+					float cos1 = Vector3::Dot(r.Direction, closestIP.Normal);
+					float cos2 = sqrt(1 - reflectance * reflectance * (1 - cos1 * cos1));
+					Vector3 newDirection = (r.Direction * reflectance) + closestIP.Normal * (reflectance * cos1 - cos2);
+					Ray ray(closestIP.Point + r.Direction * 0.0001f, newDirection);
+					refractionColor = CastRay(ray, shapesBegin, shapesEnd, lightsBegin, lightsEnd, steps - 1);
+				}
+			}
+
+			Color24 diffuseColor = Color24::Black;
 			if(closestShape->CalculateLights())
 			{
 				RaycastHit secondHit;
@@ -96,15 +122,15 @@ namespace raytracer
 				ray.Origin = closestIP.Point;
 				for(auto lightsIt = lightsBegin; lightsIt != lightsEnd; ++lightsIt)
 				{
-					color += (*lightsIt)->Affect(closestShape, closestIP, Engine::GetInstance()->GetCamera(), shapesBegin, shapesEnd);
+					diffuseColor += (*lightsIt)->Affect(closestShape, closestIP, Engine::GetInstance()->GetCamera(), shapesBegin, shapesEnd);
 				}
 			}
 			else
 			{
-				color = closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
+				diffuseColor = closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 			}
 
-			return color;
+			return reflectance * reflectionColor + refraction * refractionColor + diffuse * diffuseColor;
 		}
 #else
 		if(closestShape)
@@ -122,7 +148,7 @@ namespace raytracer
 		{
 			Ray r;
 			camera->ConstructRay(r, center);
-			return CastRay(r, shapesBegin, shapesEnd, lightsBegin, lightsEnd);
+			return CastRay(r, shapesBegin, shapesEnd, lightsBegin, lightsEnd, MAX_RECURSIVE);
 		}
 
 		float halfPixelW = 0.5f * pixelWidth;
@@ -146,7 +172,7 @@ namespace raytracer
 		for(int i = 0; i < 4; ++i)
 		{
 			camera->ConstructRay(rays[i], corners[i]);
-			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd, lightsBegin, lightsEnd);
+			colors[i] = CastRay(rays[i], shapesBegin, shapesEnd, lightsBegin, lightsEnd, MAX_RECURSIVE);
 		}
 
 		Color24 diff(0, 0, 0);

@@ -45,6 +45,10 @@ namespace raytracer
 	bool Sphere::Intersects(const Ray& r, RaycastHit& hit) const
 	{
 		Vector3 v = r.Origin - Center;
+		if(v.Length() < Radius)
+		{
+			return false;
+		}
 		float a = Vector3::Dot(r.Direction, r.Direction);
 		float b = 2.0f * Vector3::Dot(r.Direction, v);
 		float c = Vector3::Dot(v, v) - Radius * Radius;
