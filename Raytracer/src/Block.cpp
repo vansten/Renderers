@@ -87,7 +87,6 @@ namespace raytracer
 
 		if(closestShape)
 		{
-#if LIGHTS
 			float reflectance = closestShape->GetMaterial()->GetReflectance();
 			float refraction = closestShape->GetMaterial()->GetRefraction();
 			float diffuse = clamp(1.0f - reflectance - refraction);
@@ -115,6 +114,7 @@ namespace raytracer
 			}
 
 			Color24 diffuseColor = Color24::Black;
+#if LIGHTS
 			if(closestShape->CalculateLights())
 			{
 				RaycastHit secondHit;
@@ -129,11 +129,11 @@ namespace raytracer
 			{
 				diffuseColor = closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 			}
-
-			return reflectance * reflectionColor + refractionColor + diffuse * diffuseColor;
 #else
-			return closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
+			diffuseColor = closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 #endif
+			return reflectance * reflectionColor + refractionColor + diffuse * diffuseColor;
+			return closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 		}
 
 		return _backgroundColor;

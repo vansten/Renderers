@@ -22,8 +22,8 @@ namespace raytracer
 	class Engine
 	{
 	protected:
-		const int _windowWidth = 900;
-		const int _windowHeight = 900;
+		const int _windowWidth = 1000;
+		const int _windowHeight = 1000;
 		float _pixelWidth;
 		float _pixelHeight;
 
