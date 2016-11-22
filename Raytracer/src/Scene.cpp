@@ -43,7 +43,7 @@ namespace raytracer
 		_materials.push_back(reflectionMat);
 		
 		float size = 5.0f;
-		Box* b = new Box(0, 0, 0.0f, size, size, size, Matrix::Identity, grayMat);
+		Box* b = new Box(0, 0, 0.0f, size, size, size, Matrix::Identity, textureMat);
 		_shapes.push_back(b);
 		b = new Box(size, 0, -size, size, size, size, Matrix::Identity, blueMat);
 		_shapes.push_back(b);

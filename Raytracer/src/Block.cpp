@@ -85,9 +85,9 @@ namespace raytracer
 			}
 		}
 
-#if LIGHTS
 		if(closestShape)
 		{
+#if LIGHTS
 			float reflectance = closestShape->GetMaterial()->GetReflectance();
 			float refraction = closestShape->GetMaterial()->GetRefraction();
 			float diffuse = clamp(1.0f - reflectance - refraction);
@@ -130,14 +130,11 @@ namespace raytracer
 				diffuseColor = closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
 			}
 
-			return reflectance * reflectionColor + refraction * refractionColor + diffuse * diffuseColor;
-		}
+			return reflectance * reflectionColor + refractionColor + diffuse * diffuseColor;
 #else
-		if(closestShape)
-		{
 			return closestShape->GetMaterial()->GetDiffuse(closestIP.UVs);
-		}
 #endif
+		}
 
 		return _backgroundColor;
 	}

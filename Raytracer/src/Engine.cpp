@@ -67,10 +67,9 @@ namespace raytracer
 			return false;
 		}
 
-		//Thread count
 		_threadCount = 8;
 
-		int blockRows = 32;
+		int blockRows = 16;
 		int blockCount = blockRows * blockRows;
 		blockCount = max(_threadCount, blockCount);
 		if(blockCount % 2 != 0)
